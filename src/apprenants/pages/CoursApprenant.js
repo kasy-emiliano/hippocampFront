@@ -103,7 +103,7 @@ const CoursApprenant = () => {
                 <p className="text-gray-700">Chez Orion Hippocamp, nous vous proposons de multiples formations infirmières. Le but est de vous délivrer un accès simple et efficace pour que vous puissiez évoluer professionnellement en développant vos compétences en soins infirmiers. Nos contenus de formation e-learning infirmiers comprennent un panel large et varié réalisé par des spécialistes d’expérience dans le domaine en question. Partez dès maintenant à la découverte de nos formations infirmiers.</p>
                   
                   <h1>Changement</h1>
-                  <h1>Changement2</h1>
+                  <h1>Chanooo</h1>
 
               </div>
             </div>
