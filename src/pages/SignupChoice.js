@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Link } from 'react-router-dom';
+
 const SignupChoice = () => {
     return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
@@ -13,9 +15,9 @@ const SignupChoice = () => {
               </svg>
               <h2 className="text-xl font-bold mb-2">Apprenant</h2>
               <p className="text-gray-800">Pour s'inscrire en tant que apprennant clique ici</p>
-              <a href="/signup" className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 py-2 mt-4 rounded">
+              <Link to="/signup" className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 py-2 mt-4 rounded">
                 S'inscrire
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -29,9 +31,9 @@ const SignupChoice = () => {
               </svg>
               <h2 className="text-xl font-bold mb-2">Formateur</h2>
               <p className="text-gray-800">Pour s'inscrire en tant que formateur clique ici</p>
-              <a href="/adhesionform" className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 py-2 mt-4 rounded">
+              <Link to="/adhesionform" className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 py-2 mt-4 rounded">
                 S'inscrire
-              </a>
+              </Link>
             </div>
           </div>
         </div>

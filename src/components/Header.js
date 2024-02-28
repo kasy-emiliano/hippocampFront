@@ -10,9 +10,9 @@ const Header = () => {
 
     <nav class="bg-gray-800 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-            <a href="https://flowbite.com" class="flex items-center">
+            <Link to="https://flowbite.com" class="flex items-center">
                 <img src={Logo2} class="mr-3 h-8 w-18 sm:h-9" alt="Flowbite Logo" />
-            </a>
+            </Link>
             <div class="flex items-center lg:order-2">
                 <Link to="/signIn" class="text-gray-200 dark:text-white hover:bg-gray-700 
                 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 
@@ -42,14 +42,12 @@ const Header = () => {
                     <li>
                         <Link to="/landingpage" class="block py-2 pr-4 pl-3 text-gray-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-cyan-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700" aria-current="page">Accueil</Link>
                     </li>
+
                     <li>
-                        <a href="#" class="block py-2 pr-4 pl-3 text-gray-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-cyan-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">A propos</a>
+                        <Link to="/listeFormationacceuil" class="block py-2 pr-4 pl-3 text-gray-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-cyan-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Trouver une formation</Link>
                     </li>
                     <li>
-                        <a href="/listeFormationacceuil" class="block py-2 pr-4 pl-3 text-gray-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-cyan-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Trouver une formation</a>
-                    </li>
-                    <li>
-                        <a href="/signinform" class="block py-2 pr-4 pl-3 text-gray-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-cyan-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Formateur</a>
+                        <Link to="/signinform" class="block py-2 pr-4 pl-3 text-gray-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-cyan-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Formateur</Link>
                     </li>
                     <li>
                         <Link to="/adhesionform" class="block py-2 pr-4 pl-3 text-gray-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-cyan-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Devenir formateur</Link>
