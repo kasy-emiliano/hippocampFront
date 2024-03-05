@@ -131,7 +131,7 @@ import Asideform from '@/formateurs/components/Asideform';
 
 function App() {
   return (
-    <BrowserRouter basename='/meddoc' >
+    <BrowserRouter>
       <Routes>
          
       <Route element={<Layout/>}>
