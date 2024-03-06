@@ -72,7 +72,7 @@ const ListCoursApprenant = () => {
   
  
 useEffect(() => {
-  const Sock = new SockJS('http://localhost:8080/ws');
+  const Sock = new SockJS('https://hipocampbackend-5.onrender.com/ws');
   const tompClient = over(Sock);
 
   tompClient.connect({},()=>{
