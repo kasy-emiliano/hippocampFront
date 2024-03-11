@@ -117,7 +117,7 @@ const Head = () => {
           {publicites.map((pub) => (
             <div key={pub.id}>
               <Link  to={pub.lien} target="_blank" rel="noopener noreferrer">
-                <img src={`https://hipocampbackend-5.onrender.com/${pub.sary}`} alt={pub.sary} style={style}
+                <img src={decodeURIComponent(pub.sary)} alt={pub.sary} style={style}
             />
                 </Link>
                 <div className="caption-group">
@@ -138,7 +138,7 @@ const Head = () => {
         publicites.map((pub) => (
           <div key={pub.id}>
             <Link  to={pub.lien} target="_blank" rel="noopener noreferrer">
-              <img src={`https://hipocampbackend-5.onrender.com/${pub.sary}`} alt={pub.sary} style={style} />
+              <img src={decodeURIComponent(pub.sary)} alt={pub.sary} style={style} />
             </Link>
 
               <div className="caption-group">

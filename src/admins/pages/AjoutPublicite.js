@@ -25,7 +25,7 @@ const [titre, setTitre] = useState('');
 const [lien, setLien] = useState('');
 const [montantParJours, setMontantParJours] = useState('');
 const [duree, setDuree] = useState('');
-const [sary, setPhoto] = useState();
+const [image, setPhoto] = useState();
 const [datedebut, setDateDebut] = useState('');
 const [datefin, setDateFin] = useState('');
 
@@ -75,7 +75,7 @@ const [userDetailsResponse, setUserDetailsResponse] = useState(null);
       formData.append('lien', lien);
       formData.append('montantParJours', montantParJours);
       formData.append('duree', duree);
-      formData.append('sary', sary);
+      formData.append('image', image);
       formData.append('resumer', resumer);
       formData.append('datedebut', datedebut);
       formData.append('datefin', datefin);
@@ -219,9 +219,9 @@ const [userDetailsResponse, setUserDetailsResponse] = useState(null);
                         
                        <div>
                              <Label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" 
-                             htmlFor="sary" value="Photo de couverture"/>
-                         <input id="sary" accept="image/*" type="file" onChange={handleImage} required/>
-                         <img src={sary} />
+                             htmlFor="image" value="Photo de couverture"/>
+                         <input id="image" accept="image/*" type="file" onChange={handleImage} required/>
+                         <img src={image} />
                        </div>
              
                        <div className="sm:col-span-2">
