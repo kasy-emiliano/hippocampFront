@@ -14,7 +14,7 @@ const Header = () => {
 <NavBarPrincipale/>
 
 </>
-  )
+   )
 }
 
 export default Header

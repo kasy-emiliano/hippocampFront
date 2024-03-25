@@ -299,6 +299,7 @@ const Head = () => {
             <div key={pub.id}>
               <Link  to={pub.lien} target="_blank" rel="noopener noreferrer">
                 <img src={`http://localhost:8080/${pub.sary}`} alt={pub.sary} style={style}/>
+ 
                 </Link>
                
               
