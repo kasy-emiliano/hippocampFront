@@ -3,6 +3,20 @@ import { useState } from 'react';
 
 import Swal from 'sweetalert2';
 import axios from '@/api/axios';
+import NavbarAccuiel from '@/apprenants/components/NavbarAccuiel';
+import NavBarPrincipale from '@/apprenants/components/NavBarPrincipale';
+
+
+import images from "@/images/inscri.jpg";
+
+
+const styles = {
+  borderRadius: '20px',
+  width: '100%',
+   height: '50%',
+  
+  
+};
 
 
 const AdhesionForm = () => {
@@ -62,10 +76,24 @@ const AdhesionForm = () => {
 
 
     return (
-        <section className="bg-white dark:bg-gray-900">
-        <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-            <h2 className=" mb-4 text-xl font-bold text-gray-900 text-center dark:text-white">
-            Demande d’adhésion en tant que formateur</h2>
+        <>
+        <NavbarAccuiel/>
+    <NavBarPrincipale/>
+
+<br></br>
+<br></br>   
+ <section style={{backgroundColor:'white'}}>
+
+            
+  <div class="flex justify-center" style={{marginTop:75}}>
+
+
+  <div class=" bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                   Inscription   
+                </h1>
+
             <form className="my-10" onSubmit={handleSubmit}>
                 <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 shadow dark:bg-gray-900 
                 bg-white rounded-lg shadow dark:border xl:p-5 dark:bg-gray-800 dark:border-gray-700 "> 
@@ -166,8 +194,25 @@ const AdhesionForm = () => {
                     Envoyer
                 </button>
             </form>
+
+          </div>
+          
         </div>
+        
+        <div class="md:mt-0 sm:max-w-md" style={{marginLeft:'20%'}}>
+           
+           <img src={images} alt="" style={styles}/>
+
+    <h2 style={{fontWeight: 'bold'}} class="max-w-2xl mb-4 text-4xl  tracking-tight leading-none md:text-4xl xl:text-2xl 
+            dark:text-white text-gray-900">Rejoignez la communauté dès aujourd’hui</h2>
+            
+    <h2 class="max-w-2xl mb-4 text-4xl  tracking-tight leading-none md:text-4xl xl:text-xl 
+            dark:text-white text-gray-900">Hippocamp c'est : Zéro installation, des mises à jour gratuites régulières, sans aucun engagement, des transactions sécurisées et le tout, par une entreprise 100% Française.</h2>
+      </div>
+</div>
       </section>
+      </>
+
     );
 };
 

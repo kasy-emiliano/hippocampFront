@@ -6,6 +6,7 @@ import '@/App.css';
 
 import Layout from '@/pages/Layout';
 import SignupChoice from '@/pages/SignupChoice';
+import ConnexionChoix from '@/pages/ConnexionChoix';
 import LandingPage from '@/pages/LandingPage';
 
 import SignIn from '@/apprenants/pages/SignIn';
@@ -47,6 +48,12 @@ import Categorie from '@/admins/pages/Categorie';
 import ValidFormation from '@/admins/pages/ValidFormation';
 import ListFormateur from '@/admins/pages/ListFormateur';
 import AjoutPublicite from '@/admins/pages/AjoutPublicite';
+
+import AddCategorie from '@/admins/pages/AddCategorie';
+import DeleteCategorie from '@/admins/pages/DeleteCategorie';
+import Menu from '@/admins/pages/Menu';
+import ModifCategorie from '@/admins/pages/ModifCategorie';
+
 import DetailFormAdmin from '@/admins/pages/DetailFormAdmin';
 import ChapitreAdmin from '@/admins/pages/ChapitreAdmin';
 import ZoomAdmin from '@/admins/pages/ZoomAdmin';
@@ -171,6 +178,11 @@ function App() {
                     <Route path="detailformateur" element={<DetailFormateur/>}/>     
                     <Route path="listformation" element={<ListFormation/>}/>
                     <Route path="ajoutpublicite" element={<AjoutPublicite/>}/>
+                    <Route path="menu" element={<Menu/>}/>
+                    <Route path="modifCategorie" element={<ModifCategorie/>}/>
+                    <Route path="deleteCategorie" element={<DeleteCategorie/>}/>
+                    <Route path="addCategorie" element={<AddCategorie/>}/>
+
                     <Route path="/statA" element={<StatA/>}/>
                     <Route path="/statAm" element={<StatAm/>}/>
                     <Route path="/statAmd" element={<StatAmd/>}/>
@@ -306,6 +318,8 @@ function App() {
                 <Route path="/listquiz" element={<ListQuiz/>}/>
 
                 <Route path="/signupchoice" element={<SignupChoice/>}/>
+                <Route path="/connexionChoix" element={<ConnexionChoix/>}/>
+
 
                 <Route path="/addreponsequiz" element={<AddReponseQuiz/>}/>
 

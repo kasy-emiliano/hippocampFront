@@ -128,8 +128,8 @@ const handleCloseModal = () => {
 
         <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-6">
             <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
-                <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Les leçons</h2>
-                <p class="font-light text-gray-500 sm:text-xl dark:text-gray-400">Vous pouvez voir les leçons dans cette page</p>
+                <h2 style={{marginLeft:'30%',marginRight:'10%'}} class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Les leçons</h2>
+                <p style={{marginLeft:'30%',marginRight:'10%'}} class="font-light text-gray-500 sm:text-xl dark:text-gray-400">Vous pouvez voir les leçons dans cette page</p>
             </div>
             
             <div className="mt-4 mx-auto flex items-center justify-center">  
@@ -198,7 +198,7 @@ const handleCloseModal = () => {
                           )}
                               {demande.typa === 'text' && (
                             
-                                <p className="bg-white p-4 rounded-lg shadow-lg"><ContentDisplay content={demande.contenu} /></p>
+                                <p style={{marginLeft:'30%',marginRight:'10%'}} className=" "><ContentDisplay content={demande.contenu} /></p>
                                
                               )}
 
@@ -215,7 +215,7 @@ const handleCloseModal = () => {
 
                   <div>
                   {suivant === "Suivant" && (
-                    <button type="submit" onClick={handleSubmitTerminer} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <button style={{marginLeft:'30%',marginRight:'10%'}} type="submit" onClick={handleSubmitTerminer} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                       Terminer
                     </button>
                   )}

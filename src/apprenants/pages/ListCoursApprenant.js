@@ -5,25 +5,32 @@ import { Alert, Dropdown } from 'flowbite-react';
 
 import axios from '@/api/axios';
 import { useLocation,Link} from 'react-router-dom';
+import Header from '@/components/Header';
+
 import { useState, useEffect } from 'react';
+import NavbarAccuiel from '@/apprenants/components/NavbarAccuiel';
+import NavApprenant from '@/apprenants/components/NavApprenant';
+
+
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import { Rating } from 'primereact/rating';
 import Footer from '@/components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebookSquare, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { faFacebookSquare, faLinkedin,faFacebook } from '@fortawesome/free-brands-svg-icons';
 
 
 import DetailZoom from '@/formateurs/pages/DetailZoom';
 import ChapitreApprenant from '@/apprenants/pages/ChapitreApprenant';
 import ZoomApprenant from '@/apprenants/pages/ZoomApprenant';
 import QuizApprenant from '@/apprenants/pages/QuizApprenant';
-import NavApprenant from '@/apprenants/components/NavApprenant';
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 import {over} from 'stompjs';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
+
+ 
 
 const ListCoursApprenant = () => {
 
@@ -40,7 +47,7 @@ const ListCoursApprenant = () => {
   
   const styles = {
     commentaireBloc: {
-      backgroundColor: '#e0e0e0', // couleur de fond légèrement plus sombre
+      backgroundColor: '#f5f5f5', // couleur de fond légèrement plus sombre
       borderRadius: '8px',
       padding: '10px',
       marginBottom: '10px',
@@ -51,7 +58,7 @@ const ListCoursApprenant = () => {
 
   const style = {
     commentaireBloc: {
-      backgroundColor: 'gray', // couleur de fond légèrement plus sombre
+      backgroundColor: '#e0e0e0', // couleur de fond légèrement plus sombre
       borderRadius: '8px',
       padding: '10px',
       marginBottom: '10px',
@@ -62,8 +69,6 @@ const ListCoursApprenant = () => {
 
   const [reponsesForComment, setReponsesForComment] = useState([]);
 
-  const [commentaires, setCommentaires] = useState([]);
-  const [Commentaire, setMessage] = useState('');
   const [stompClient, setStompClient] = useState(null);
 
   const queryParams = new URLSearchParams(location.search);
@@ -71,12 +76,16 @@ const ListCoursApprenant = () => {
 
   
  
-useEffect(() => {
+/*useEffect(() => {
   const Sock = new SockJS('http://localhost:8080/ws');
   const tompClient = over(Sock);
 
   tompClient.connect({},()=>{
     console.log('Connected to WebSocket');
+    tompClient.subscribe(`/topic/public`, (message) => {
+      const nouveauxCommentaires = JSON.parse(message.body);
+      setCommentaires([nouveauxCommentaires]);
+    });
     setStompClient(tompClient);
     
 
@@ -88,7 +97,7 @@ useEffect(() => {
       stompClient.disconnect();
     }
   };
-},);
+},[]);
 
  const handleMessageChange=(e)=>{
   setMessage(e.target.value);
@@ -124,16 +133,18 @@ useEffect(() => {
   };
 }, [stompClient, idFormation]);
 
-
-
 */
+
+
 
  
 
     const [demandes, setDemandes] = useState([]);
-
-    const [contentSelected, setContentSelected] = useState(null);
+ 
    
+  const [commentaires, setCommentaires] = useState([]);
+
+    const [Commentaire, setNouveauCommentaire] = useState("");
   
     const [activeTab, setActiveTab] = useState(0);
     const [note, setNombreEtoiles] = useState(0);
@@ -194,13 +205,13 @@ useEffect(() => {
           .catch((error) => {
             console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
           });
-          /*axios.get(`/LesCommentaires?idFormation=${idFormation}`)
+          axios.get(`/LesCommentaires?idFormation=${idFormation}`)
           .then((response) => {
-            setMessages(response.data);
+            setCommentaires(response.data);
           })
           .catch((error) => {
             console.error('Erreur lors de la récupération des commentaires :', error);
-          });*/
+          });
           axios.get("/ApprenantNote?idFormation="+ idFormation + "&token="+ token)
           .then((response) => {
             setApprenantNote(response.data);
@@ -218,22 +229,28 @@ useEffect(() => {
       
       }, []);
 
-      
 
-
-      const handleReplyButtonClick = (idCommentaire) => {
-        console.log(idCommentaire);
-        setShowReplyForm(idCommentaire);
-        axios.get(`/LesReponsesCommentaires?idCommentaire=${idCommentaire}`)
+      useEffect(() => {
+        axios.get(`/LesReponsesCommentaires?idCommentaire=${showReplyForm}`)
           .then((response) => {
-            console.log(response.data);
-            setReponsesForComment( response.data);
+            setReponsesForComment(response.data);
           })
           .catch((error) => {
             console.error('Erreur lors de la récupération des commentaires :', error);
           });
+      }, [showReplyForm]); // Exécuter chaque fois que showReplyForm change
+    
+      useEffect(() => {
+        const storedReplyForm = localStorage.getItem('showReplyForm');
+        if (storedReplyForm) {
+          setShowReplyForm(parseInt(storedReplyForm));
+        }
+      }, []); // Exécuter une seule fois au montage
+    
+      const handleReplyButtonClick = (idCommentaire) => {
+        setShowReplyForm(idCommentaire);
+        localStorage.setItem('showReplyForm', idCommentaire);
       };
-      
 
     
       const [selectedZoom, setSelectedZoom] = useState(null);
@@ -284,16 +301,15 @@ useEffect(() => {
     e.preventDefault();
   
     try {
-      if ( idFormation && Commentaire && token) {
+      if (idFormation && Commentaire && token) {
         const response = await axios.post(`/AjoutCommentaire?idFormation=${idFormation}&Commentaire=${Commentaire}&token=${token}`);
      // Traiter la réponse ou rafraîchir la liste des commentaires, etc.
         console.log(response.data);
   
-       
-        // Effacer le contenu du commentaire après l'envoi
-       // setNouveauCommentaire("");
         
-     
+        // Effacer le contenu du commentaire après l'envoi
+        setNouveauCommentaire("");
+        window.location.reload();
     
       }
     } catch (error) {
@@ -313,13 +329,9 @@ useEffect(() => {
         
         // Effacer le contenu du commentaire après l'envoi
         setReponsecommentaire("");
-        Swal.fire({
-          icon: 'success',
-          title: 'Merci',
-          text: 'Votre reponse a été ajouter',
-          footer: '<a href=""></a>'
-        });
-    
+        window.location.reload();
+        
+              
       }
     } catch (error) {
      
@@ -384,12 +396,17 @@ const handleLinkedInShare = (formationId, titre) => {
   window.open(linkedInShareUrl, '_blank');
 };
 
+const [contentSelectedChap, setContentSelectedChap] = useState('chapitre'); // Définir initialement le contenu à afficher
+const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Définir initialement le contenu à afficher
+
     return (
 
         <>
          
+         <NavbarAccuiel/>
 
         <NavApprenant/>
+
 <br></br>
 <br></br>
 <div className="relative">
@@ -403,42 +420,23 @@ const handleLinkedInShare = (formationId, titre) => {
     )}
   </div>
   <div className="absolute bottom-8 left-0 w-full flex justify-center">
-    <h1 style={{ color: 'Black', textAlign: 'center', fontWeight: 'bold', backgroundColor: 'rgba(255, 255, 255, 0.8)', transform: 'translateY(70%)' }} className="text-5xl font-medium w-full md:w-1/2 mr-auto">{demandes.titre}</h1>
+    <h1 style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', backgroundColor:'#0096BB', transform: 'translateY(70%)' }} className="text-5xl font-medium w-full md:w-1/2 mr-auto">{demandes.titre}</h1>
   </div>
 </div>
+<br></br>
  <div className="flex justify-between w-full">
-    
 
-
-    <form className="box font-medium w-full md:w-1/2 ml-auto" onSubmit={handleNoteSubmit} style={{ color: 'navy', textAlign: 'center', fontWeight: 'bold' }}>
-        <input type="hidden" name="idFormation" value={idFormation} />
-         
-        <legend>Donnez une note à cette formation</legend>
-        <p></p>
-        <Rating name='note' value={note} onChange={(e) => setNombreEtoiles(e.target.value)} style={{ display: 'block', margin: 'auto' }} />
-        <h2 style={{ color: 'navy', textAlign: '', fontWeight: 'bold' }}></h2>
-        <ul className="text-left ml-10">
-            {ApprenantNote.map((apprenantNote) => (
-                <li key={apprenantNote.idnote}>
-                    {apprenantNote.note && (
-                        <strong>Vous avez donné {apprenantNote.note} étoile(s) à cette formation</strong>
-                    )}
-                </li>
-            ))}
-        </ul>
-        <button type="submit" className="px-4 py-2 bg-blue-300 text-blue-700 rounded-md text-sm">Vote</button>
-    </form>
-    <div>
+    <div style={{marginLeft:'8%',width:'60%',height:'1%'}}>
   {moyenne !== null && (
-    <div style={{marginRight:'20%'}}>
-    <strong>Note Moyenne de cette formation</strong>
-      <div>
+    <div>
+   
+      <div style={{width:'60%',height:'1%'}} >
         {Array.from({ length: 5 }).map((_, index) => (
           <span key={index}>
             {  parseFloat(moyenne) >= index + 1 ? ( // Utiliser Math.floor pour arrondir la moyenne à l'entier inférieur
-              <FontAwesomeIcon icon={solidStar} style={{ color: 'gold' }} />
+              <FontAwesomeIcon icon={solidStar} style={{ color: 'gold',width:'6%',height:'1%' }} />
             ) : (
-              <FontAwesomeIcon icon={regularStar} style={{ color: 'gold' }} />
+              <FontAwesomeIcon icon={regularStar} style={{ color: 'gold' ,width:'6%',height:'1%' }} />
             )}
           </span>
         ))}
@@ -456,53 +454,43 @@ const handleLinkedInShare = (formationId, titre) => {
           <div className="bg-white border border-gray-300 shadow-lg rounded-lg transition duration-300 ">
             
             <div className="p-4">
-              <h2 className="text-xl font-bold mb-2 ">Formation</h2>
+            <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Formations</h4>
               <p className="text-gray-700"> <ContentDisplay content={demandes.resumer} /></p>
               <br></br>
               <p>Vous pouvez également voir ci-dessous les contenues pedagogique :</p>
 
+<br></br>
+              <div className="">
 
-              <div className="w-full flex justify-center lg:space-x-16">
+              <div className="w-full">
+      <div>
+ 
+      </div>
 
-<div className="w-full">
-
-    <div className="flex justify-start mt-20">
-        <Dropdown label="Voir un contenu pédagogique" dismissOnClick={false}>
+      {contentSelectedChap === 'chapitre' && (
         <div>
-            <Dropdown.Item >
-                <p onClick={() => setContentSelected('chapitre')}>Chapitre</p>
-            </Dropdown.Item>
+          
+          <h4  style={{ color: 'white',  textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Chapitres</h4>
+          <ChapitreApprenant />
+        </div>
+      )}
+<br></br>
+      {contentSelectedWeb === 'webinar' && (
+        
+        <div>
+          <h4  style={{ color: 'white',  textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Quiz</h4>
 
-            <Dropdown.Item>
-                <p onClick={() => setContentSelected('webinar')}>Webinar</p>
-            </Dropdown.Item>
-            
-            <Dropdown.Item>
-                <p onClick={() => setContentSelected('quiz')}>Quiz</p>
-            </Dropdown.Item>
-            </div>
-        </Dropdown>
+          <ZoomApprenant />
+        </div>
+      )}
+
+    
+        
+        <div>
+          <QuizApprenant />
+        </div>
+    
     </div>
-
-    {contentSelected === 'chapitre' && (
-        <div>
-        <ChapitreApprenant/>
-        </div>
-      )}
-
-      {contentSelected === 'webinar' && (
-        <div>
-        <ZoomApprenant/>
-        </div>
-      )}
-
-      {contentSelected === 'quiz' && (
-        <div>
-        <QuizApprenant/>
-        </div>
-      )}
-
-</div>
 
 <div>
  
@@ -517,23 +505,24 @@ const handleLinkedInShare = (formationId, titre) => {
             <nav className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0 w-full" aria-label="Table navigation">
                      
                     <div className="overflow-x-auto">
+                      
+                    <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/1 mr-auto">Formateur</h4>
                         <div className="bg-white-400 p-4 rounded-lg shadow-lg relative justify-between items-start md:items-center 
                                         space-y-3 md:space-y-0 md:flex-row ">
                                                    
                              
-                                     
-                                         <h1>Formteur</h1>
                                         <div className="bg-white border border-gray-300 rounded-lg p-1">
+                                        <Link to={`/profilformateur?tokenform=${demandes.monFormateur?.token}`} target="_blank" rel="noopener noreferrer">
                                           <img
-                                            src="https://source.unsplash.com/random"
+                                            src={`http://localhost:8080/${demandes?.monFormateur?.pdp}`}
                                             alt="Avatar"
                                             className="w-20 h-20 rounded-full object-cover"
                                           />
-                                       
+                                          </Link>
+
+                                
                                         <h2 className="mt-4 text-xl font-semibold">{demandes?.monFormateur?.nom} {demandes?.monFormateur?.prenom}</h2>
-                                        <h2 className="mt-4 text-xl font-semibold">{demandes?.monFormateur?.nomOrganisme}</h2>
-                                        <p className="text-gray-500">{demandes?.monFormateur?.email}</p>
-                                        <p className="text-gray-500">{demandes?.monFormateur?.numero}</p>
+                                        
                                       </div>
                                          
                                  
@@ -606,7 +595,7 @@ const handleLinkedInShare = (formationId, titre) => {
                             <br/>
                         </div>
 <br/>
-<button
+<button style={{backgroundColor:'#0096BB',color:'white',marginLeft:'-80%',width:'100%',height:'60%'}}
                   className="flex items-center mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
                   focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 
                   dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  
@@ -627,49 +616,57 @@ const handleLinkedInShare = (formationId, titre) => {
             d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"
           />
         </svg>
-        Suivre formation
+        Suivre cette formation
       </button>
+      
                         </div>
+                        
                     </div>
-                </div>
+                    
                 </div>
                 
-                <div className="w-full md:w-1/6 flex justify-between"> 
-    <div className="bg-white shadow-lg rounded-lg transition duration-100">
-        <div className="p-2">
-            <p className="text-xl font-bold mb-2">Partager </p>
-            <div className="flex items-center"> 
-                <div onClick={() => handleFacebookShare(demandes.idFormation, demandes.titre)} className="cursor-pointer bg-blue-500 text-white px-4 py-3 rounded-md mr-4">
-                    <FontAwesomeIcon icon={faFacebookSquare} className="mr-1" />
                 </div>
-                <div onClick={() => handleLinkedInShare(demandes.idFormation, demandes.titre)} className="cursor-pointer bg-blue-500 text-white px-4 py-3 rounded-md">
-                    <FontAwesomeIcon icon={faLinkedin} className="mr-1" />
-                </div>
-            </div>
-        </div>
-    </div>
+                
+      
+<form className="box font-medium w-full md:w-1/2 ml-auto" onSubmit={handleNoteSubmit} style={{ color: '#0096BB', textAlign: 'center', fontWeight: 'bold',marginLeft:'30%' }}>
+        <input type="hidden" name="idFormation" value={idFormation} />
+         
+        <legend>Noter cette formation</legend>
+        <p></p>
+        <Rating name='note' value={note} onChange={(e) => setNombreEtoiles(e.target.value)} style={{ display: 'block', margin: 'auto' }} />
+        <h2 style={{ color: '#0096BB', textAlign: '', fontWeight: 'bold' }}></h2>
+        <ul className="text-left ml-10">
+            {ApprenantNote.map((apprenantNote) => (
+                <li key={apprenantNote.idnote}>
+                    {apprenantNote.note && (
+                        <strong>Merci, vous avez donné {apprenantNote.note} étoile(s) à cette formation</strong>
+                    )}
+                </li>
+            ))}
+        </ul>
+        <button type="submit" className="px-4 py-2 bg-blue-300 text-blue-700 rounded-md text-sm">Note</button>
+    </form>
+
+</div>
 </div>
 
-
-</div>
-</div>
-
-
-<div className="flex flex-wrap" style={{marginLeft:'3%'}} >
+<br></br>
+<div className="flex flex-wrap" style={{marginLeft:'5%'}} >
   {/* Section des commentaires à droite */}
   <div className="flex-grow">
     <div>
-      <h2 style={{ color: 'navy', fontWeight: 'bold',marginLeft:'3%' }}>COMMENTAIRES :</h2>
+      <h2 style={{ color: '#082A4D', fontWeight: 'bold',marginLeft:'5%' }}>COMMENTAIRES :</h2>
+      <br></br>
       <ul className="text-left ml-10">
         {commentaires.slice(0, nombreCommentairesAffiches).map((commentaire) => (
           <li key={commentaire.idcommentaire} style={styles.commentaireBloc}>
             {commentaire.nomFormateur && commentaire.prenomFormateur && (
-              <strong style={{ color: 'blue' }}>
+              <strong style={{ color: '#082A4D' }}>
                 {commentaire.nomFormateur} {commentaire.prenomFormateur}
               </strong>
             )}
             {commentaire.nomApprenant && commentaire.prenomApprenant && (
-              <strong style={{ color: 'blue' }}>
+              <strong style={{ color: '#082A4D' }}>
                 {commentaire.nomApprenant} {commentaire.prenomApprenant}
               </strong>
             )}
@@ -689,10 +686,10 @@ const handleLinkedInShare = (formationId, titre) => {
         {reponsesForComment.slice(0, nombreRCommentairesAffiches).map((commentaire) => (
           <li key={commentaire.idCommentaire} style={style.commentaireBloc}>
             {commentaire.nomFormateur && commentaire.prenomFormateur && (
-              <strong>{commentaire.nomFormateur} {commentaire.prenomFormateur}</strong>
+              <strong style={{ color: '#082A4D' }}>{commentaire.nomFormateur} {commentaire.prenomFormateur}</strong>
             )}
             {commentaire.nomApprenant && commentaire.prenomApprenant && (
-              <strong>{commentaire.nomApprenant} {commentaire.prenomApprenant}</strong>
+              <strong style={{ color: '#082A4D' }}>{commentaire.nomApprenant} {commentaire.prenomApprenant}</strong>
             )}
 
             <br />
@@ -720,7 +717,7 @@ const handleLinkedInShare = (formationId, titre) => {
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mb-2"
           placeholder="Saisissez votre réponse..."
         />
-        <button type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
+        <button style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
           Répondre
         </button>
       </form>
@@ -742,17 +739,19 @@ const handleLinkedInShare = (formationId, titre) => {
     </div>
 
     {/* Formulaire de commentaire en bas */}
-    <form onSubmit={sendMessage} className="flex flex-col items-center mt-6">
+    <form onSubmit={handleCommentSubmit} className="flex flex-col items-center mt-6">
       <textarea
         id="commentaire"
         name="Commentaire"
         value={Commentaire}
-        onChange={handleMessageChange}
+        onChange={(e) => setNouveauCommentaire(e.target.value)}
+
+
         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mb-2"
         placeholder="Saisissez votre commentaire..."
       />
       <input type="hidden" name="idFormation" value={idFormation} />
-      <button type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
+      <button style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
         Ajouter votre commentaire
       </button>
     </form>

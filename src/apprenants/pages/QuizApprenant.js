@@ -47,16 +47,11 @@ const QuizApprenant = () => {
                 {demandes.mesQuizs.map((quiz) => (
 
                 <li className="mt-5">
-          
-                    <Accordion collapseAll>
-                        <Accordion.Panel>
-                            <Accordion.Title  key={quiz.idQuiz} value={quiz.idQuiz}>
-                            <h1 className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 mb-2">
+                            <h1 className="">
                               {quiz.titre}
-                            </h1>
-                            </Accordion.Title>
-                        </Accordion.Panel>
-                    </Accordion>
+                            </h1> 
+                          
+                     
                 </li>
                 ))}
               </ul>

@@ -14,6 +14,8 @@ import Swal from 'sweetalert2';
 import axios from '@/api/axios';
 
 import Cookies from 'js-cookie';
+import BarNav from '../components/BarNav';
+
 
 
 const FormationList = () => {
@@ -87,6 +89,8 @@ const FormationList = () => {
 
       <>
       <Navform/>
+      <BarNav/>
+
       <br/>
       <br/>
       <br/>
@@ -142,10 +146,6 @@ const FormationList = () => {
                 </Table.HeadCell>
 
                 <Table.HeadCell>
-                  Image
-                </Table.HeadCell>
-
-                <Table.HeadCell>
                   Actions
                 </Table.HeadCell>
              
@@ -163,15 +163,7 @@ const FormationList = () => {
                   <Table.Cell>{demande.nomTypesAcces}</Table.Cell>
                 
 
-                  <Table.Cell>
-                    
-                      <img
-                      src={`data:image/jpeg;base64,${demande.image.toString('base64')}`} // Assurez-vous que votre image est enregistrée en tant que tableau d'octets
-                      alt="personne"
-                      className="rounded-full overflow-hidden w-12 h-12"/>
-                 
-                  </Table.Cell>
-
+                  
                   <Table.Cell className="flex items-center space-x-2">
                   {demande.etat === 1 && (
                     <>

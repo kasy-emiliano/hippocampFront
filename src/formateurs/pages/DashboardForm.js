@@ -8,7 +8,7 @@ import 'flowbite';
 const DashboardForm = () => {
     return (
      <>
-       <HeadDash/>    
+       <HeadDash/>
     </>
     );
 };

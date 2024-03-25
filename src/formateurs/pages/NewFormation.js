@@ -11,6 +11,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import Navform from '../components/Navform';
 
+import BarNav from '../components/BarNav';
 
 import {  useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -133,6 +134,9 @@ useEffect(() => {
 
     return (
     <>
+      <Navform/>
+         <BarNav/>
+
  
    <main className="p-2 md:ml-34 h-auto pt-10">
     <section className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">

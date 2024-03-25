@@ -48,12 +48,12 @@ const ChapitreApprenant = () => {
           <ul className="list-decimal pl-6">
           {demandes.meschapitres.map((chapitre) => (
 
-              <li className="mt-5">
+              <li className="">
           
                   <Accordion collapseAll>
                       <Accordion.Panel>
 
-                          <Accordion.Title className="mt-4" key={chapitre.idChapitres} value={chapitre.idChapitres}>
+                          <Accordion.Title className="" key={chapitre.idChapitres} value={chapitre.idChapitres}>
                             {chapitre.titre}
                           </Accordion.Title>
 

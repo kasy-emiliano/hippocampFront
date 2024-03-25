@@ -1,33 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '@/api/axios';
-import { useState, useEffect } from 'react';
 
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Header from '@/components/Header';
 
 
-import images from "@/images/boss1.png";
+import images from "@/images/accueil.jpg";
+import proposImage from "@/images/propos.png";
 
+ 
+// import RechercheCours from '@/apprenants/pages/RechercheCours';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
+ 
 
 const styles = {
-    borderRadius: '20px'
+    borderRadius: '20px',
+    marginTop:'-55%',
+    width: '80%',
+     height: '1%'
+    
     
 };
 
 const style = {
-  borderRadius: '20px',
-  width: '100%', height: '50%',
+  width: '1120px', height: '381px'
 };
 
-
- 
-  
-  
 
 
 const Head = () => {
@@ -58,10 +62,11 @@ const Head = () => {
 
   const slid = {
    
-  borderRadius: '20px',
-  width:'500px',
-  marginLeft:'60%'
+    width: '1120px', 
+    height: '381px',
 
+  marginLeft:'10%',
+  marginTop: '50px', // Ajustez la marge supérieure pour correspondre à la hauteur de votre barre de navigation
   };
     
     const sliderSettings = {
@@ -82,6 +87,111 @@ const Head = () => {
   width: '100%', // Les virgules sont utilisées pour séparer les propriétés
   backgroundColor: 'white',
       };
+
+
+      const [categories, setCategories] = useState([]);
+      const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [typesAcces, setTypesAcces] = useState([]);
+  const [selectedAccesId, setSelectedAccesId] = useState("");
+
+  const [texte, setTexte] = useState("");
+
+  const [demandes, setDemandes] = useState([]);
+  const [randomFormations, setRandomFormations] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const cardsPerPage = 6; // 3 columns * 2 rows
+
+  const [moyennes, setMoyennes] = useState({});
+  
+  useEffect(() => {
+    axios.get("/RechercheFormation?categorie="+""+"&TypesAcces="+ ""+"&mot="+"")
+      .then(async (response) => {
+        setDemandes(response.data.recherche);
+
+        const moyennesFormation = {};
+        for (const demande of response.data.recherche) {
+          try {
+            const response = await axios.get(`/moyenne?idFormation=${demande.idFormation}`);
+            moyennesFormation[demande.idFormation] = response.data;
+          } catch (error) {
+            console.error(`Erreur lors de la récupération de la moyenne pour la formation ${demande.idFormation}:`, error);
+          }
+        }
+        setMoyennes(moyennesFormation);
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+      });
+      axios.get(`LesCategorie`)
+          .then((response) => {
+            setCategories(response.data);
+          })
+          .catch((error) => {
+            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+          });
+          axios.get(`LesTypesAcces`)
+          .then((response) => {
+            setTypesAcces(response.data);
+          })
+          .catch((error) => {
+            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+          });
+  }, []);
+
+  const handleCategoryChange = (e) => {
+    const selectedCategoryId = e.target.value;
+    setSelectedCategoryId(selectedCategoryId);
+  };
+
+  const handleAccesChange = (e) => {
+    const selectedAccesId = e.target.value;
+    setSelectedAccesId(selectedAccesId);
+  };
+
+  const generateRandomIndexes = (maxRange,count) => {
+    const indexes = new Set();
+    while (indexes.size < count) {
+      const randomIndex = Math.floor(Math.random()* maxRange);
+      indexes.add(randomIndex);
+    }
+    return Array.from(indexes);
+  };
+  useEffect(() => {
+    if (demandes.length > 0) {
+      const randomIndexes = generateRandomIndexes(demandes.length, 3);
+      const selectedFormations = randomIndexes.map(index => demandes[index]);
+      setRandomFormations(selectedFormations);
+    }
+  }, [demandes]);
+
+  
+
+  // Calculate the indexes of the cards to display for the current page
+  const indexOfLastCard = currentPage * cardsPerPage;
+  const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+  //const currentCards = demandes.slice(indexOfFirstCard, indexOfLastCard);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  
+  const handleSearchTermChange = (event) => {
+    setTexte(event.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // const response = await axios.get("/RechercheFormation?categorie="+categorie+ "&TypesAcces="+ typesAcces+ "&mot="+ texte);
+
+      window.location.href="/recherchecours?categorie="+selectedCategoryId+ "&TypesAcces="+selectedAccesId+ "&mot="+ texte;
+      // window.location.href="/ProfilForm?email="+email+"&password="+password;
+      // //navigate("/quiz");
+    }catch (error) {
+        console.error(error);
+  
+      }
+  };
+
+ 
       
   return (
 
@@ -94,42 +204,103 @@ const Head = () => {
 
     <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
         <div class="mr-auto place-self-center lg:col-span-7">
-            <h2 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl 
-            dark:text-white text-gray-900">Bienvenue sur Hippocamp</h2>
-            <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-            Découvrez une nouvelle dimension de l'apprentissage avec notre plateforme e-learning innovante, où le savoir rencontre la technologie pour vous offrir une expérience d'apprentissage exceptionnelle.</p>
-            <Link to="/signupchoice" className="inline-flex items-center justify-center px-5 py-3 mr-3 text-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm  me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                S'inscrire
-                <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </Link>
-            <Link to="/signIn" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
-                S'identifier
-            </Link> 
+        <br></br>
+        <br></br>
+        <br></br>
+
+            <h2 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-4xl 
+            dark:text-white text-gray-900">Notre domaine d'expertise réside dans la formation des professionnels et des acteurs dévoués à servir la communauté.</h2>
+            <p class="font-light text-gray-500  ">
+            Nous sommes fermement convaincus de l'importance cruciale de la formation continue dans ce secteur.  Nous proposons une vaste gamme de programmes de formation conçus pour répondre à des besoins spécifiques. Ces programmes sont destinés aux professionnels et acteurs désireux d'améliorer leurs compétences ou d'acquérir de nouvelles connaissances dans le cadre de leur développement professionnel.</p>
+            
+           
         </div>
-        <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
+      </div>
+      <div style={{marginLeft:'65%'}} class="hidden lg:mt-0 lg:col-span-4 lg:flex">
             <img src={images} alt="" style={styles}/>
-        </div>                
+        </div>
+
+        <br></br>
+        <br></br>
+           <div className="flex flex-col items-center justify-center">
+    <h3  style={{ color: 'white',marginLeft:'5%', textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-5xl w-full md:w-1/2 mr-auto">Trouver votre formation</h3>
+
+    <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-center md:items-stretch justify-center mt-20">
+    <div className="flex flex-wrap justify-center gap-4">
+      <div style={{  marginTop: "-27px" }}>
+    <input
+      type="text"
+      placeholder="Search..."
+      value={texte}
+      onChange={handleSearchTermChange}
+      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mr-6"/>
+    {/* Dropdown as a select element */}
+      </div>
+    
+      <div style={{  marginTop: "-55px" }} >
+      <label for="categorie" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      Catégorie
+      </label>
+      <select id="categorie" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+      focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+      dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
+      value={selectedCategoryId}
+      onChange={handleCategoryChange}>
+        <option key={0} value={""}>Aucun Filtre</option>
+      {categories.map((categorie) => (
+          <option key={categorie.idCategorie} value={categorie.idCategorie}>{categorie.nom}</option>
+         ))}
+      </select>
+     </div>
+  
+  
+
+    <div  style={{  marginTop: "-55px" }}  className="flex-1 md:ml-4">
+        <label htmlFor="acces" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Type Accès
+        </label>
+            <select id="acces" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+            focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+            dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
+            value={selectedAccesId}
+            onChange={handleAccesChange}>
+              <option key={0} value={""}>Aucun Filtre</option>
+                {typesAcces.map((typesAcces) => (
+                    <option key={typesAcces.idTypesAcces} value={typesAcces.idTypesAcces}>
+                    {typesAcces.nom}
+                    </option>
+              ))}
+            </select>
     </div>
 
-  <div className="slider-area" style={slid}>
+
+<div style={{  marginTop: "-27px" }}>
+        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+           
+        </button>
+
+      </div>
+
+
+
+  </div>
+</form>
+
+  </div>
+
+  <div   style={slid}>
       {publicites.length > 1 ? (
         <Slider {...sliderSettings}>
+
           {publicites.map((pub) => (
             <div key={pub.id}>
               <Link  to={pub.lien} target="_blank" rel="noopener noreferrer">
-                <img src={`https://hipocampbackend-5.onrender.com/${pub.sary}`} alt={pub.sary} style={style}
-            />
+                <img src={`http://localhost:8080/${pub.sary}`} alt={pub.sary} style={style}/>
                 </Link>
-                <div className="caption-group">
-                  <h1 className="caption title">
-                    {pub.title} <span className="primary">{pub.titre}</span>
-                  </h1>
-                  <h1 className="caption subtitle" style={{ fontWeight: 'bold' }}><ContentDisplay content={pub.resumer} /></h1>
-                  <Link  to={pub.lien} target="_blank" rel="noopener noreferrer">
-                  <h4 className="caption subtitle" style={{ fontWeight: 'bold' }}>Voir ce site</h4>
-                </Link>
-
-                </div>
+               
               
             </div>
           ))}
@@ -138,96 +309,118 @@ const Head = () => {
         publicites.map((pub) => (
           <div key={pub.id}>
             <Link  to={pub.lien} target="_blank" rel="noopener noreferrer">
-              <img src={`https://hipocampbackend-5.onrender.com/${pub.sary}`} alt={pub.sary} style={style} />
+            <img src={`http://localhost:8080/${pub.sary}`} alt={pub.sary} style={style}/>
+
+
             </Link>
 
-              <div className="caption-group">
-                <h2 className="caption title">
-                  {pub.title} <span className="primary">{pub.titre}</span>
-                </h2>
-                <h1 className="caption subtitle" style={{ fontWeight: 'bold' }}><ContentDisplay content={pub.resumer} /></h1>
-                  <Link  to={pub.lien} target="_blank" rel="noopener noreferrer">
-                  <h4 className="caption subtitle" style={{ fontWeight: 'bold' }}>Voir ce site</h4>
-                </Link>
-              </div>
+               
           </div>
         ))
       )}
   </div>
 
-
     <ParallaxProvider>
     <Parallax y={[-20, 1000]} tagOuter="figure">
     
-  <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-  <div class="max-w-screen-md mb-8 lg:mb-16">
-      <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Designed for business teams like yours</h2>
-      <p class="text-gray-500 sm:text-xl dark:text-gray-400">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
-  </div>
-  <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
-      <div>
-          <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-              <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-          </div>
-          <h3 class="mb-2 text-xl font-bold dark:text-white">Marketing</h3>
-          <p class="text-gray-500 dark:text-gray-400">Plan it, create it, launch it. Collaborate seamlessly with all  the organization and hit your marketing goals every month with our marketing plan.</p>
-      </div>
-      <div>
-          <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-              <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path></svg>
-          </div>
-          <h3 class="mb-2 text-xl font-bold dark:text-white">Legal</h3>
-          <p class="text-gray-500 dark:text-gray-400">Protect your organization, devices and stay compliant with our structured workflows and custom permissions made for you.</p>
-      </div>
-      <div>
-          <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-              <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"></path><path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"></path></svg>                    
-          </div>
-          <h3 class="mb-2 text-xl font-bold dark:text-white">Business Automation</h3>
-          <p class="text-gray-500 dark:text-gray-400">Auto-assign tasks, send Slack messages, and much more. Now power up with hundreds of new templates to help you get started.</p>
-      </div>
-      <div>
-          <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-              <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path></svg>
-          </div>
-          <h3 class="mb-2 text-xl font-bold dark:text-white">Finance</h3>
-          <p class="text-gray-500 dark:text-gray-400">Audit-proof software built for critical financial operations like month-end close and quarterly budgeting.</p>
-      </div>
-      <div>
-          <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-              <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path></svg>
-          </div>
-          <h3 class="mb-2 text-xl font-bold dark:text-white">Enterprise Design</h3>
-          <p class="text-gray-500 dark:text-gray-400">Craft beautiful, delightful experiences for both marketing and product with real cross-company collaboration.</p>
-      </div>
-      <div>
-          <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-              <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
-          </div>
-          <h3 class="mb-2 text-xl font-bold dark:text-white">Operations</h3>
-          <p class="text-gray-500 dark:text-gray-400">Keep your company’s lights on with customizable, iterative, and structured workflows built for all efficient teams and individual.</p>
-      </div>
-  </div>
+<br></br>
+<br></br>
+<br></br>
+<br></br>
+
+<div class="bg--900 dark:bg--900" style={{ backgroundImage: `linear-gradient(rgba(4, 14, 26, 0.7), rgba(4, 14, 26, 0.7)), url(${proposImage})`, backgroundSize: '', backgroundPosition: 'center'}} >
+
+  <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+  <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400" style={{color:'white'}} >
+            Nous sommes fermement convaincus de l'importance cruciale de la formation continue dans ce secteur.  Nous proposons une vaste gamme de programmes de formation conçus pour répondre à des besoins spécifiques. Ces programmes sont destinés aux professionnels et acteurs désireux d'améliorer leurs compétences ou d'acquérir de nouvelles connaissances dans le cadre de leur développement professionnel.</p>
+            
+</div>
 </div>
 
 </Parallax>
 </ParallaxProvider>
-<div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-6">
-<dl class="grid max-w-screen-md gap-8 mx-auto text-gray-900 sm:grid-cols-3 dark:text-white">
-    <div class="flex flex-col items-center justify-center">
-        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">73M+</dt>
-        <dd class="font-light text-gray-500 dark:text-gray-400">developers</dd>
+ <br></br>
+<h1 className="flex flex-wrap justify-center  mb-4 text-4xl " style={{ color: 'black',marginLeft:'auto' }}>Quelques formations disponibles</h1>
+<div className="flex flex-wrap justify-center">
+      {randomFormations.map((demande) => (
+         <div key={demande.id} className="w-1/3 px-4 py-4" style={{ width:'300px'}}>
+                    <Link to={`/detailFormationaccueil?idFormation=${demande.idFormation}&titre=${encodeURIComponent(demande.titre.replace(/ /g, '_'))}`}>
+
+            <div className="bg-white shadow-lg rounded-lg transition duration-300 hover:scale-105">
+              <img
+                src={`data:image/jpeg;base64,${demande.image.toString('base64')}`}
+                alt="personne"
+                className="w-full h-64 object-cover rounded-t-lg"
+              />
+              <div className="p-4">
+                <h2 className="text-xl font-bold mb-2 overflow-hidden truncate">{demande.titre}</h2>
+                <h5 className="text-gray-700 overflow-hidden truncate">{demande.nomCategorie}</h5>
+                <p className="text-gray-700 overflow-hidden truncate">Hippocamp Academy</p>
+
+                <div>
+  {moyennes[demande.idFormation] !== null && (
+    <div>
+      <div>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <span key={index}>
+            {  parseFloat(moyennes[demande.idFormation]) >= index + 1 ? ( // Utiliser Math.floor pour arrondir la moyenne à l'entier inférieur
+              <FontAwesomeIcon icon={solidStar} style={{ color: 'gold' }} />
+            ) : (
+              <FontAwesomeIcon icon={regularStar} style={{ color: 'gold' }} />
+            )}
+          </span>
+        ))}
+      </div>
     </div>
-    <div class="flex flex-col items-center justify-center">
-        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">1B+</dt>
-        <dd class="font-light text-gray-500 dark:text-gray-400">contributors</dd>
-    </div>
-    <div class="flex flex-col items-center justify-center">
-        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">4M+</dt>
-        <dd class="font-light text-gray-500 dark:text-gray-400">organizations</dd>
-    </div>
-</dl>
+  )}
 </div>
+
+
+                  {Number(demande.prix) !== 0 ? (
+                      <div className="mt-4 flex items-center">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 text-blue-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+
+                        <div className="ml-2 text-sm text-gray-600">
+                        {Number(demande.prix).toLocaleString('en-EN').replace('.', '')} Ariary
+                      </div>
+                    </div>
+                  ): ( demande.nomTypesAcces==='Gratuit'?(
+                    <div className="mt-4 flex items-center">
+
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                           stroke="currentColor" className="w-6 h-6 text-blue-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                      </svg>
+                      <div className="ml-2 text-sm text-gray-600">
+                  {demande.nomTypesAcces}
+                    </div>
+                    </div>
+                    ):(
+
+                      <div className="mt-4 flex items-center">
+
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-500">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                          </svg>
+                        <div className="ml-2 text-sm text-gray-600">
+                          {demande.nomTypesAcces}
+                        </div>
+                      </div>
+
+                   ))}
+
+              </div>
+            </div>
+          </Link>
+        </div>
+      ))}
+
+           </div>
+
 </section>
 
 

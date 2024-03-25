@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {Link } from 'react-router-dom';
+import {  useLocation,Link } from 'react-router-dom';
+
 import Header from '@/components/Header';
 import axios from '@/api/axios';
 import Cookies from 'js-cookie';
@@ -10,14 +11,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
-import {over} from 'stompjs';
-import SockJS from 'sockjs-client';
+import NavbarAccuiel from '@/apprenants/components/NavbarAccuiel';
+import NavApprenant from '@/apprenants/components/NavApprenant';
 
 
-const CoursApprenant = () => {
+const ListeFormationAcceuil = () => {
+    
 
-  const [categorie, setCategorie] = useState('');
-  const [typesAcces, setTypesAcces] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+const [typesAcces, setTypesAcces] = useState([]);
+const [selectedAccesId, setSelectedAccesId] = useState("");
+
   const [texte, setTexte] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -32,7 +37,6 @@ const CoursApprenant = () => {
     axios.get("/RechercheFormation?categorie="+""+"&TypesAcces="+ ""+"&mot="+"")
       .then(async (response) => {
         setDemandes(response.data.recherche);
-        setUserDetailsResponse(response.data.f);
 
         const moyennesFormation = {};
         for (const demande of response.data.recherche) {
@@ -48,7 +52,31 @@ const CoursApprenant = () => {
       .catch((error) => {
         console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
       });
+      axios.get(`LesCategorie`)
+          .then((response) => {
+            setCategories(response.data);
+          })
+          .catch((error) => {
+            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+          });
+          axios.get(`LesTypesAcces`)
+          .then((response) => {
+            setTypesAcces(response.data);
+          })
+          .catch((error) => {
+            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+          });
   }, []);
+
+  const handleCategoryChange = (e) => {
+    const selectedCategoryId = e.target.value;
+    setSelectedCategoryId(selectedCategoryId);
+  };
+
+  const handleAccesChange = (e) => {
+    const selectedAccesId = e.target.value;
+    setSelectedAccesId(selectedAccesId);
+  };
 
   // Calculate the indexes of the cards to display for the current page
   const indexOfLastCard = currentPage * cardsPerPage;
@@ -66,7 +94,7 @@ const CoursApprenant = () => {
     try {
       // const response = await axios.get("/RechercheFormation?categorie="+categorie+ "&TypesAcces="+ typesAcces+ "&mot="+ texte);
 
-      window.location.href="/recherchecours?categorie="+categorie+ "&TypesAcces="+ typesAcces+ "&mot="+ texte;
+      window.location.href="/recherchecours?categorie="+selectedCategoryId+ "&TypesAcces="+selectedAccesId+ "&mot="+ texte;
       // window.location.href="/ProfilForm?email="+email+"&password="+password;
       // //navigate("/quiz");
     }catch (error) {
@@ -74,44 +102,59 @@ const CoursApprenant = () => {
   
       }
   };
+  const location = useLocation(); // Utilisez useLocation pour obtenir l'objet location
 
-   
+  useEffect(() => {
+    // Utilisez location ici
+    console.log(location.pathname);
+  }, [location]); // Assurez-vous de passer location comme dépendance
+
+  const queryParams = new URLSearchParams(location.search);
+  const etat = queryParams.get('etat');
 
   return (
     
     <>
-    
+
+<NavbarAccuiel/>
+
+<NavApprenant/>
+
+
 <br></br>
 <br></br>
-<div className="flex flex-wrap justify-center">
-      
-        <div  className="w-full md:w- lg:w- px- py-6">
-        <img
-         src={images} class="h-20 mr-3" alt="FlowBite Logo" 
-                
-                className="w-full h-81 object-cover rounded-t-lg"
-              />
-             
-        </div>
-      
-        <div  className="w-full md:w-1/2">
-          
-            <div className="bg-white shadow-lg rounded-lg transition duration-300">
-              
-              <div className="p-4">
-                <h2 className="text-xl font-bold mb-2 ">Formation</h2>
-                <p className="text-gray-700">Chez Orion Hippocamp, nous vous proposons de multiples formations infirmières. Le but est de vous délivrer un accès simple et efficace pour que vous puissiez évoluer professionnellement en développant vos compétences en soins infirmiers. Nos contenus de formation e-learning infirmiers comprennent un panel large et varié réalisé par des spécialistes d’expérience dans le domaine en question. Partez dès maintenant à la découverte de nos formations infirmiers.</p>
-                  
-                  <h1>Changement</h1>
-                  <h1>Chanooo</h1>
+<br></br>
+<div className="relative ">
+  <div className="md:w lg:w- mx-auto px-4 py-4 w-full h-64 object-cover rounded-t-lg" style={{backgroundColor:'#97E4FF'}}>
+  </div>
+  <div className="absolute bottom-10 flex justify items-center h-1 rounded-full" style={{marginLeft:'5%'}}>
+  <div style={{
+    width: '500px', // Ajustez la taille du cercle selon vos besoins
+    height: '300px',
+     backgroundColor:'#f5f5f5',
+    backgroundPosition: 'center', // Centre l'image dans le cercle
+    backgroundSize: 'contain', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+    backgroundSize: 'cover', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+    marginTop:'0%',
+    display: 'flex', // Pour centrer le contenu verticalement et horizontalement
+    justifyContent: 'center', // Pour centrer le contenu horizontalement
+    alignItems: 'center', // Pour centrer le contenu verticalement
+    color: 'black', // Couleur du texte
+    fontSize: '20px', // Taille de la police
+    fontSize: '1em', // Taille de la police en 'em'
+  }}>
+ <p style={{marginLeft:'10%',marginRight:'10%'}}>Chez HIPPOCAMP, nous croyons fermement à l'importance vitale de la formation continue. Nous offrons une vaste gamme de formations pour répondre à vos besoins, dans le but de vous offrir un accès simple et efficace pour développer vos compétences professionnelles et évoluer. Nos formations e-learning comprennent un programme varié et complet conçu par des experts expérimentés dans chaque domaine. Explorez dès maintenant nos offres de formation !</p>
+  </div>
+</div>
+</div>
+ 
 
-              </div>
-            </div>
-          
-        </div>
-
-    </div>
-    <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-center md:items-stretch justify-center mt-20">
+    <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+    <form  style={{backgroundColor:'#f5f5f5',width:'50%',height:'1%',marginLeft:'25%'} } onSubmit={handleSubmit} 
+    className="flex flex-col md:flex-row items-center md:items-stretch justify-center mt-20 md:w lg:w- mx-auto px-4 py-4 w-full h-64 object-cover rounded-t-lg">
     <div className="flex flex-wrap justify-center gap-4">
       <div style={{  marginTop: "27px" }}>
     <input
@@ -122,26 +165,24 @@ const CoursApprenant = () => {
       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mr-6"/>
     {/* Dropdown as a select element */}
       </div>
-    {userDetailsResponse && (
       <div>
       <label for="categorie" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-      Catégorie
+      Catégories
       </label>
       <select id="categorie" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
       focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
       dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-      value={categorie} 
-      onChange={(e) => setCategorie(e.target.value)}>
+      value={selectedCategoryId}
+      onChange={handleCategoryChange}>
         <option key={0} value={""}>Aucun Filtre</option>
-      {userDetailsResponse.allCategorie.map((categorie) => (
+      {categories.map((categorie) => (
           <option key={categorie.idCategorie} value={categorie.idCategorie}>{categorie.nom}</option>
          ))}
       </select>
      </div>
-  )}
+
   
   
-  {userDetailsResponse && (
     <div className="flex-1 md:ml-4">
         <label htmlFor="acces" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         Type Accès
@@ -149,17 +190,16 @@ const CoursApprenant = () => {
             <select id="acces" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
             focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
             dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-            value={typesAcces} 
-                onChange={(e) => setTypesAcces(e.target.value)}>
+            value={selectedAccesId}
+            onChange={handleAccesChange}>
               <option key={0} value={""}>Aucun Filtre</option>
-                {userDetailsResponse.allTypesAcces.map((typesAcces) => (
+                {typesAcces.map((typesAcces) => (
                     <option key={typesAcces.idTypesAcces} value={typesAcces.idTypesAcces}>
                     {typesAcces.nom}
                     </option>
               ))}
             </select>
     </div>
-)}
 
 <div style={{  marginTop: "28px" }}>
         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md">
@@ -174,13 +214,17 @@ const CoursApprenant = () => {
 
 
   </div>
+  
 </form>
+<br></br>
+<br></br>
+<br></br>
  
     <div className="flex flex-wrap justify-center">
       {currentCards.map((demande) => (
-        <div key={demande.id} className="w-full md:w-1/ lg:w-1/5 px-4 py-6">
-          <Link to={`/listcoursapprenant?idFormation=${demande.idFormation}&titre=${encodeURIComponent(demande.titre.replace(/ /g, '_'))}`}>
-          
+        <div key={demande.id} className="w-1/3 px-4 py-4" style={{ width:'300px'}}>
+                    <Link to={`/listcoursapprenant?idFormation=${demande.idFormation}&titre=${encodeURIComponent(demande.titre.replace(/ /g, '_'))}`}>
+
             <div className="bg-white shadow-lg rounded-lg transition duration-300 hover:scale-105">
               <img
                 src={`data:image/jpeg;base64,${demande.image.toString('base64')}`}
@@ -276,4 +320,4 @@ const CoursApprenant = () => {
 
 };
 
-export default CoursApprenant;
+export default ListeFormationAcceuil;

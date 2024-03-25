@@ -117,6 +117,17 @@ function Dashboard() {
                 </Link>
               </li>
 
+              <Link to="/menu" className={`flex items-center p-2 text-white font-medium rounded-lg 
+              ${activeItem === 'menu' ? 'bg-gray-500 text-white' : 'text-gray-900 dark:text-white hover:bg-gray-700 dark:hover:bg-gray-700 group'}`} onClick={() => handleItemClick('menu')}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" className="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6 2a2 2 0 012-2h8a2 2 0 012 2M6 2a2 2 0 012 2M6 2v2m12-2v2M6 8a2 2 0 012-2h8a2 2 0 012 2M6 8a2 2 0 012 2M6 8v2m12-2v2M6 14a2 2 0 012-2h8a2 2 0 012 2M6 14a2 2 0 012 2M6 14v2m12-2v2M6 20a2 2 0 012-2h8a2 2 0 012 2M6 20a2 2 0 012 2M6 20v2m12-2v2"></path>
+                </svg>
+
+                <span className="ml-3">Categorie</span>
+              </Link>
+
               <li>
                 <Accordion collapseAll>
                   <Accordion.Panel>

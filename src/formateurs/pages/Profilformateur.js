@@ -1,295 +1,637 @@
+'use client';
 import React from 'react';
 
-import { useState, useEffect } from 'react';
+import { Alert, Dropdown } from 'flowbite-react';
 
 import axios from '@/api/axios';
-import Swal from 'sweetalert2';
-
+import { useLocation,Link} from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import Navform from '../components/Navform';
+import BarNav from '../components/BarNav';
+import NavApprenant from '@/apprenants/components/NavApprenant';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
-// import Navform from '../components/Navform';
-// import Asideform from '../components/Asideform';
-import DashboardFormateur from '../pages/DashboardFormateur';
 
+import NavbarAccuiel from '@/apprenants/components/NavbarAccuiel';
+
+import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { faFacebook,faLinkedin,faTwitter,faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { faEnvelope,faPhone } from '@fortawesome/free-solid-svg-icons';
 
 const Profilformateur = () => {
+  
 
-    const [userDetailsResponse, setUserDetailsResponse] = useState(null);
-
-    const [nom, setNom] = useState();
-    const [prenom, setPrenom] = useState();
-    const [organisme, setOrganisme] = useState();
-    const [ville, setVille] = useState();
-    const [civilite, setCivilite] = useState();
-    const [profession, setProfession] = useState();
-    const [modeDexercice, setModeDexercice] = useState();
-    const [presentation, setPresentation] = useState();
-    const [linkedin, setLinkedin] = useState();
-    const [facebook, setFacebook] = useState();
-    const [phone, setPhone] = useState();
-
-    // Définissez l'état initial avec une valeur de date par défaut
-    const [datenaissance, setDatenaissance] = useState('');
+  
+    const [demandes, setDemandes] = useState([]);
+    const location = useLocation(); // Utilisez useLocation pour obtenir l'objet location
 
     useEffect(() => {
+      // Utilisez location ici
+      console.log(location.pathname);
+    }, [location]); // Assurez-vous de passer location comme dépendance
+  
+    const queryParams = new URLSearchParams(location.search);
+  const tokenform = queryParams.get('tokenform');
+  const tokenTsotra = queryParams.get('tokentsotra');
+  //const apprenantMur = queryParams.get('apprenantMur');
+
+
+     
+    const token = Cookies.get('token'); 
+   
+    useEffect(() => {
         // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
-        axios.get('/details')
+        axios.get("/InfoFormateurPhoto?token="+token)
           .then((response) => {
-            setUserDetailsResponse(response.data);
+            setDemandes(response.data);
           })
           .catch((error) => {
             console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
           });
       }, []);
-
-      const token = Cookies.get('token')
 
       useEffect(() => {
         // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
-        console.log(token)
-        axios.get("/InfoFormateur?token="+token)
+        axios.get("/InfoFormateurPhoto?token="+tokenform)
           .then((response) => {
-    
-            setNom(response.data.nom);
-            setPrenom(response.data.prenom);
-            setOrganisme(response.data.nomOrgannisme);
-            setVille(response.data.ville);
-            setCivilite(response.data.civilite);
-            setProfession(response.data.profession);
-            setModeDexercice(response.data.modeDexercice);
-            setDatenaissance(response.data.datenaissance);
-            setPresentation(response.data.bio);
-            setLinkedin(response.data.linkedin);
-            setFacebook(response.data.facebook);
-            setPhone(response.data.numero);
-    
+            setDemandes(response.data);
           })
           .catch((error) => {
             console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
           });
       }, []);
 
-        
+      useEffect(() => {
+        // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
+        axios.get("/InfoFormateurPhoto?token="+tokenTsotra)
+          .then((response) => {
+            setDemandes(response.data);
+          })
+          .catch((error) => {
+            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+          });
+      }, []);
 
 
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try { 
-        
-          const response = await axios.post("/ModifFormateur?nom="+nom+"&prenom="+prenom+"&organisme="+organisme+"&ville="+
-          ville+"&civilite="+civilite+"&profession="+profession+"&modeDexercice="+modeDexercice+"&bio="+
-          presentation+"&datenaissance="+datenaissance+"&linkedin="+linkedin+"&facebook="+facebook+"&numero="+phone+
-          "&token="+token);
-        
-           if(response.status === 200) {
-            Swal.fire({
-              icon: 'success',
-              title: '',
-              text: 'Modification effectuée',
-              footer: '<a href=""></a>'
-            });
-    
-            //navigate("/modifformateur")
-        window.location.href="/modifformateur";
-
-    };
-    
-        }catch (error) {
-            console.error(error);
-            if(error.response?.status === 400) {
-              Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Veuillez activer votre compte ou créer un compte',
-                footer: '<a href=""></a>'
-              });
-    
-              //navigate("/modifformateur")
-              window.location.href="/modifformateur";
-
+      const ContentDisplay = ({ content }) => {
+        const createMarkup = () => {
+          return { __html: content };
         };
-          }
+    
+        return <div dangerouslySetInnerHTML={createMarkup()} />;
       };
-     
 
+      const [demande, setDemande] = useState([]);
+      const [tailleDuTableau, setTailleDuTableau] = useState(0);
+  
+      const [currentPage, setCurrentPage] = useState(1);
+      const cardsPerPage = 6; // 3 columns * 2 rows
+    
+      const [userDetailsResponse, setUserDetailsResponse] = useState(null);
+      const [moyennes, setMoyennes] = useState({});
+      
+      const indexOfLastCard = currentPage * cardsPerPage;
+      const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+      const currentCards = demande.slice(indexOfFirstCard, indexOfLastCard);
+    
+      const paginate = (pageNumber) => setCurrentPage(pageNumber);
+      
+  
+      useEffect(() => {
+          // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
+          axios.get("/MesFormation?token="+token)
+            .then((response) => {
+              setDemande(response.data);
+              setTailleDuTableau(response.data.length);
+              console.log(response.data.length);
+              console.log(response.data[0].image)
+  
+            })
+            .catch((error) => {
+              console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+            });
+        }, []);
+  
+        useEffect(() => {
+          // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
+          axios.get("/MesFormation?token="+tokenform)
+            .then((response) => {
+              setDemande(response.data);
+              setTailleDuTableau(response.data.length);
+              console.log(response.data.length);
+              console.log(response.data[0].image)
+  
+            })
+            .catch((error) => {
+              console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+            });
+        }, []);
+        
+        useEffect(() => {
+          // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
+          axios.get("/MesFormation?token="+tokenTsotra)
+            .then((response) => {
+              setDemande(response.data);
+              setTailleDuTableau(response.data.length);
+              console.log(response.data.length);
+              console.log(response.data[0].image)
+  
+            })
+            .catch((error) => {
+              console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+            });
+        }, []);
+        
+  
     return (
-      <>
-      <DashboardFormateur/>
-        <section className="bg-white dark:bg-gray-900">
-        <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-           
-            <form onSubmit={handleSubmit}>
-                <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 shadow
-                bg-white rounded-lg dark:border xl:p-5 dark:bg-gray-800 dark:border-gray-700 ">
-      
-              <div className="w-full">
-                <label for="nom" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Nom*
-                </label>
-                <input type="text" name="nom" id="nom" className="bg-gray-50 border border-gray-300
-                 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                  dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                  placeholder="Veuillez remplir..." required  value={nom} 
-                  onChange={(e) => setNom(e.target.value)}/>
+        <>
+         
+         {token && !tokenform && !tokenTsotra && (
+        <>
+          <Navform />
+          <BarNav />
+          <br></br>
+ 
+<div className="relative ">
+  <div className="md:w lg:w- mx-auto px-4 py-4" style={{marginLeft:'-5%'}}>
+    {demandes.pdp && (
+      <img
+      src={`http://localhost:8080/${demandes.pdc}`}
+        alt="personne"
+        className="w-full h-64 object-cover rounded-t-lg"
+      />
+    )}
+  </div>
+  <div className="absolute bottom-10 flex justify items-center h-1 rounded-full" style={{marginLeft:'-2%'}}>
+  <div style={{
+    width: '200px', // Ajustez la taille du cercle selon vos besoins
+    height: '200px',
+    borderRadius: '50%', // Fait du div un cercle
+    backgroundImage: `url(http://localhost:8080/${demandes.pdp})`, // Chemin de l'image de profil
+    backgroundPosition: 'center', // Centre l'image dans le cercle
+    backgroundSize: 'contain', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+    backgroundSize: 'cover', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+  }}>
+
+  </div>
+</div>
+</div>
+  
+<br></br>
+<br></br>
+<br></br>
+    
+    
+<div className="bg-white border border-gray-300 shadow-lg rounded-lg transition duration-300 " style={{marginLeft:'-5%'}}>
+            
+            <div className="p-4">
+              <h2 className="text-xl font-bold mb-2 ">Formation</h2>
+              <h2 className="text-l font-medium text-gray-500 dark:text-white">Biographie: </h2><p className="text-gray-700"> <ContentDisplay content={demandes.bio} /></p>
+
+              <h2 className="text-l font-medium text-gray-500 dark:text-white">Contact: </h2><p className="text-gray-700"> <ContentDisplay content={demandes.numero } /></p>
+
+              <h2 className="text-l font-medium text-gray-500 dark:text-white">Facebook: </h2><p className="text-gray-700"> <ContentDisplay content={demandes.facebook } /></p>
+
+              <h2 className="text-l font-medium text-gray-500 dark:text-white">Linkedin: </h2><p className="text-gray-700"> <ContentDisplay content={demandes.linkedin } /></p>
+
+
             </div>
-      
-            <div className="w-full">
-            <label for="organisme" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            Prénoms
-            </label>
-            <input type="text" name="prenom" id="prenom" className="bg-gray-50 border border-gray-300
-             text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-              block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-              dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-              placeholder="Veuillez remplir..." required  value={prenom} 
-              onChange={(e) => setPrenom(e.target.value)}/>
-        </div>
-      
-                   <div className="w-full">
-                        <label for="organisme" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Nom de l’organisme ou formateur*
-                        </label>
-                        <input type="text" name="organisme" id="organisme" className="bg-gray-50 border border-gray-300
-                         text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                          block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                          dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                          placeholder="Veuillez remplir..." required  value={organisme} 
-                          onChange={(e) => setOrganisme(e.target.value)}/>
+          </div>
+          <br></br>
+      <h2 className="flex flex-wrap justify-center " style={{ color: 'black', fontWeight: 'bold',marginLeft:'-2%' }}>Mes Formations</h2>
+          <div className="flex flex-wrap justify-center"style={{marginLeft:'-2%'}}>
+      {currentCards.map((demande) => (
+        <div key={demande.id} className="w-full md:w-1/ lg:w-1/5 px-4 py-6">
+          <Link to={`/voirlistform?idFormation=${demande.idFormation}`}>
+          
+            <div className="bg-white shadow-lg rounded-lg transition duration-300 hover:scale-105">
+              <img
+                src={`data:image/jpeg;base64,${demande.image.toString('base64')}`}
+                alt="personne"
+                className="w-full h-64 object-cover rounded-t-lg"
+              />
+              <div className="p-4">
+                <h2 className="text-xl font-bold mb-2 overflow-hidden truncate">{demande.titre}</h2>
+                <h5 className="text-gray-700 overflow-hidden truncate">{demande.nomCategorie}</h5>
+                <p className="text-gray-700 overflow-hidden truncate">{demande?.monFormateur?.nom} {demande?.monFormateur?.prenom}</p>
+
+                <div>
+  {moyennes[demande.idFormation] !== null && (
+    <div>
+      <div>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <span key={index}>
+            {  parseFloat(moyennes[demande.idFormation]) >= index + 1 ? ( // Utiliser Math.floor pour arrondir la moyenne à l'entier inférieur
+              <FontAwesomeIcon icon={solidStar} style={{ color: 'gold' }} />
+            ) : (
+              <FontAwesomeIcon icon={regularStar} style={{ color: 'gold' }} />
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+
+                  {Number(demande.prix) !== 0 ? (
+                      <div className="mt-4 flex items-center">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 text-blue-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+
+                        <div className="ml-2 text-sm text-gray-600">
+                        {Number(demande.prix).toLocaleString('en-EN').replace('.', '')} Ariary
+                      </div>
                     </div>
-      
-                    <div className="w-full">
-                      <label for="ville" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ville*</label>
-                      <input type="text" name="ville" id="ville" className="bg-gray-50 border border-gray-300
-                      text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                          block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                          dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                          placeholder="New-york" required  value={ville} 
-                          onChange={(e) => setVille(e.target.value)}/>
+                  ): ( demande.nomTypesAcces==='Gratuit'?(
+                    <div className="mt-4 flex items-center">
+
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                           stroke="currentColor" className="w-6 h-6 text-blue-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                      </svg>
+                      <div className="ml-2 text-sm text-gray-600">
+                  {demande.nomTypesAcces}
                     </div>
-      
-                    {userDetailsResponse && (
-                    <div className="w-full">
-                    <label for="civilite" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Titre ou civilité*
-                    </label>
-                    <select id="civilite" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm 
-                    rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 
-                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                    dark:focus:ring-primary-500 dark:focus:border-primary-500" value={civilite}
-                    onChange={(e) => setCivilite(e.target.value)}>
-                    {userDetailsResponse.allcivilite.map((civilite) => (
-                      <option key={civilite.idcivilite} value={civilite.idcivilite}>{civilite.nom}</option>
-                     ))}
-                    </select>
-                   </div>
-                   )}
-      
-                   {userDetailsResponse && (
-                   <div className="w-full">
-                      <label for="profession" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                      Spécialités ou domaines*
-                      </label>
-                      <select id="profession" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm 
-                      rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 
-                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                      dark:focus:ring-primary-500 dark:focus:border-primary-500" value={profession}
-                      onChange={(e) => setProfession(e.target.value)}>
-                      {userDetailsResponse.allprofession.map((profession) => (
-                        <option key={profession.idProfession} value={profession.idProfession}>{profession.nom}</option>
-                       ))}
-                      </select>
-                  </div>
-                  )}
-      
-                  {userDetailsResponse && (
-                  <div className="w-full">
-                  <label for="modeDexercice" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Mode d’exercice*
-                  </label>
-                  <select id="modeDexercice" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm 
-                  rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 
-                  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                  dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  value={modeDexercice}
-                  onChange={(e) => setModeDexercice(e.target.value)}>
-                  {userDetailsResponse.allmodeDexercice.map((modeDexercice) => (
-                    <option key={modeDexercice.idmodeDexercice} value={modeDexercice.idmodeDexercice}>{modeDexercice.nom}</option>
+                    </div>
+                    ):(
+
+                      <div className="mt-4 flex items-center">
+
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-500">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                          </svg>
+                        <div className="ml-2 text-sm text-gray-600">
+                          {demande.nomTypesAcces}
+                        </div>
+                      </div>
+
                    ))}
-                  </select>
-                 </div>
-              )}
-      
-                      <div className="w-full">
-                      <label for="presentation" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                      Présentation générale
-                       </label>
-                      <input type="text-area" name="presentation" id="presentation" className="bg-gray-50 border border-gray-300
-                       text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                        dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                        placeholder="Votre texte..." required   value={presentation}
-                        onChange={(e) => setPresentation(e.target.value)}/>
-                      </div> 
-      
-                      <div className="w-full">
-                      <h2 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                      Date de Naissance
-                      </h2> 
-                      <input type="date" name="datenaissance" id="datenaissance" className="bg-gray-50 border border-gray-300 
-                      text-gray-600 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 
-                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                      dark:focus:ring-primary-500 dark:focus:border-primary-500"  required 
-                      value={datenaissance} 
-                      onChange={(e) => setDatenaissance(e.target.value)}/>
-                      </div>
-      
-                      <div className="w-full">
-                      <label for="linkedin" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                      Lien Linkedin
-                      </label>
-                      <input type="text" name="linkedin" id="linkedin" className="bg-gray-50 border border-gray-300
-                       text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                        dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                        placeholder="Linkedin…" required   value={linkedin}
-                        onChange={(e) => setLinkedin(e.target.value)}/>
-                      </div>
-      
-                      <div className="w-full">
-                      <label for="facebook" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                      Lien Facebook
-                      </label>
-                      <input type="text" name="facebook" id="facebook" className="bg-gray-50 border border-gray-300
-                       text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                        dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                        placeholder="Facebook…" required   value={facebook}
-                        onChange={(e) => setFacebook(e.target.value)}/>
-                      </div>
-      
-                      <div className="w-full">
-                      <label for="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Téléphone*</label>
-                      <input type="text" name="phone" id="phone" className="bg-gray-50 border border-gray-300
-                       text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                        dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                        placeholder="03XXXXXXXX" required   value={phone}
-                        onChange={(e) => setPhone(e.target.value)}/>
-                      </div>
-      
-                </div>
-                <button type="submit" className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium
-                 text-center text-white bg-cyan-700 rounded-lg focus:ring-4 focus:ring-primary-200 
-                 dark:focus:ring-primary-900 hover:bg-primary-800">
-                   Modifier
-                </button>
-            </form>
+
+              </div>
+            </div>
+          </Link>
         </div>
-      </section>
-      </>
+      ))}
+
+      {/* Pagination controls */}
+      <div className="w-full flex justify-center mt-4">
+        {Array.from({ length: Math.ceil(demande.length / cardsPerPage) }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => paginate(page)}
+            className={`mx-2 px-3 py-2 rounded-full ${
+              page === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+    </div>
+
+        </>
+      )}
+
+
+
+{tokenform && (
+        <>
+         <NavbarAccuiel/>
+
+        <NavApprenant/>
+          
+          <br></br>
+ 
+<div className="relative ">
+  <div className="md:w lg:w- mx-auto px-4 py-4" style={{marginLeft:'-18%'}}>
+    {demandes.pdp && (
+      <img 
+      src={`http://localhost:8080/${demandes.pdc}`}
+        alt="personne"
+        className="w-full h-64 object-cover rounded-t-lg"
+      />
+    )}
+    <h2 style={{marginLeft:'19%',marginTop:20,fontWeight: 'bold'}} className="entry-info text-4xl w-full md:w-1/2 mr-auto">{demandes.nom} {demandes.prenom}</h2>
+    <form className="box font-medium w-full md:w-1/3 ml-auto flex justify-center">
+        <button style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-300 text-blue-700 rounded-md text-sm" >Message</button>
+    </form>
+  </div>
+  <div className="absolute bottom-10 flex justify items-center h-1 rounded-full" style={{marginLeft:'-15%'}}>
+  <div style={{
+    width: '200px', // Ajustez la taille du cercle selon vos besoins
+    height: '200px',
+    borderRadius: '50%', // Fait du div un cercle
+    backgroundImage: `url(http://localhost:8080/${demandes.pdp})`, // Chemin de l'image de profil
+    backgroundPosition: 'center', // Centre l'image dans le cercle
+    backgroundSize: 'contain', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+    backgroundSize: 'cover', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+    marginTop:'-40%'
+  }}>
+
+  </div>
+</div>
+</div>
+  
+<br></br>
+<br></br>
+<br></br>
+
+
+    
+    
+<div className="bg-white border border-gray-300 shadow-lg rounded-lg transition duration-300 " style={{marginLeft:'-18%'}}>
+            
+            <div className="p-4">
+            <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#F39530'}} className="entry-info text-3xl w-full md:w-1/4 mr-auto">Présentation</h4>
+ <p class="font-light text-gray-500">  <ContentDisplay content={demandes.bio} /></p>
+<br></br>
+ <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#F39530'}} className="entry-info text-3xl w-full md:w-1/4 mr-auto">Contacts</h4>
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faPhone}/> : {demandes.numero }</p>
+
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faEnvelope}/> : {demandes.email }</p>
+
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faFacebook}/> : {demandes.facebook }</p>
+
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faLinkedin}/> : {demandes.linkedin }</p>
+
+
+            </div>
+          </div>
+          <br></br>
+          <h4  style={{ color: 'white', textAlign: 'center', marginLeft:'30%',backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/4 mr-auto">Mes Formations</h4>
+          <div className="flex flex-wrap justify-center"style={{marginLeft:'-18%'}}>
+      {currentCards.map((demande) => (
+        <div key={demande.id} className="w-1/3 px-4 py-4" style={{ width:'300px'}}>
+          <Link to={`/listcoursapprenant?idFormation=${demande.idFormation}&titre=${encodeURIComponent(demande.titre.replace(/ /g, '_'))}`}>
+          
+            <div className="bg-white shadow-lg rounded-lg transition duration-300 hover:scale-105">
+              <img
+                src={`data:image/jpeg;base64,${demande.image.toString('base64')}`}
+                alt="personne"
+                className="w-full h-64 object-cover rounded-t-lg"
+              />
+              <div className="p-4">
+                <h2 className="text-xl font-bold mb-2 overflow-hidden truncate">{demande.titre}</h2>
+                <h5 className="text-gray-700 overflow-hidden truncate">{demande.nomCategorie}</h5>
+                <p className="text-gray-700 overflow-hidden truncate">{demande?.monFormateur?.nom} {demande?.monFormateur?.prenom}</p>
+
+                <div>
+  {moyennes[demande.idFormation] !== null && (
+    <div>
+      <div>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <span key={index}>
+            {  parseFloat(moyennes[demande.idFormation]) >= index + 1 ? ( // Utiliser Math.floor pour arrondir la moyenne à l'entier inférieur
+              <FontAwesomeIcon icon={solidStar} style={{ color: 'gold' }} />
+            ) : (
+              <FontAwesomeIcon icon={regularStar} style={{ color: 'gold' }} />
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+
+                  {Number(demande.prix) !== 0 ? (
+                      <div className="mt-4 flex items-center">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 text-blue-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+
+                        <div className="ml-2 text-sm text-gray-600">
+                        {Number(demande.prix).toLocaleString('en-EN').replace('.', '')} Ariary
+                      </div>
+                    </div>
+                  ): ( demande.nomTypesAcces==='Gratuit'?(
+                    <div className="mt-4 flex items-center">
+
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                           stroke="currentColor" className="w-6 h-6 text-blue-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                      </svg>
+                      <div className="ml-2 text-sm text-gray-600">
+                  {demande.nomTypesAcces}
+                    </div>
+                    </div>
+                    ):(
+
+                      <div className="mt-4 flex items-center">
+
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-500">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                          </svg>
+                        <div className="ml-2 text-sm text-gray-600">
+                          {demande.nomTypesAcces}
+                        </div>
+                      </div>
+
+                   ))}
+
+              </div>
+            </div>
+          </Link>
+        </div>
+      ))}
+
+      {/* Pagination controls */}
+      <div className="w-full flex justify-center mt-4">
+        {Array.from({ length: Math.ceil(demande.length / cardsPerPage) }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => paginate(page)}
+            className={`mx-2 px-3 py-2 rounded-full ${
+              page === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+    </div>
+
+        </>
+      )}
+
+
+
+{tokenTsotra && (
+        <>
+         <Header/>
+
+          
+          <br></br>
+ 
+<div className="relative ">
+  <div className="md:w lg:w- mx-auto px-4 py-4" style={{marginLeft:'-18%'}}>
+    {demandes.pdp && (
+      <img 
+      src={`http://localhost:8080/${demandes.pdc}`}
+        alt="personne"
+        className="w-full h-64 object-cover rounded-t-lg"
+      />
+    )}
+    <h2 style={{marginLeft:'19%',marginTop:20,fontWeight: 'bold'}} className="entry-info text-4xl w-full md:w-1/2 mr-auto">{demandes.nom} {demandes.prenom}</h2>
+     
+  </div>
+  <div className="absolute bottom-10 flex justify items-center h-1 rounded-full" style={{marginLeft:'-15%'}}>
+  <div style={{
+    width: '200px', // Ajustez la taille du cercle selon vos besoins
+    height: '200px',
+    borderRadius: '50%', // Fait du div un cercle
+    backgroundImage: `url(http://localhost:8080/${demandes.pdp})`, // Chemin de l'image de profil
+    backgroundPosition: 'center', // Centre l'image dans le cercle
+    backgroundSize: 'contain', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+    backgroundSize: 'cover', // Ajuste la taille de l'image pour qu'elle couvre tout le conteneur
+    marginTop:'-40%'
+  }}>
+
+  </div>
+</div>
+</div>
+  
+<br></br>
+<br></br>
+<br></br>
+
+
+    
+    
+<div className="bg-white border border-gray-300 shadow-lg rounded-lg transition duration-300 " style={{marginLeft:'-18%'}}>
+            
+            <div className="p-4">
+            <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#F39530'}} className="entry-info text-3xl w-full md:w-1/4 mr-auto">Présentation</h4>
+ <p class="font-light text-gray-500">  <ContentDisplay content={demandes.bio} /></p>
+<br></br>
+ <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#F39530'}} className="entry-info text-3xl w-full md:w-1/4 mr-auto">Contacts</h4>
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faPhone}/> : {demandes.numero }</p>
+              
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faEnvelope}/> : {demandes.email }</p>
+
+
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faFacebook}/> : {demandes.facebook }</p>
+
+              <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faLinkedin}/> : {demandes.linkedin }</p>
+
+
+            </div>
+          </div>
+          <br></br>
+          <h4  style={{ color: 'white', textAlign: 'center', marginLeft:'30%',backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/4 mr-auto">Mes Formations</h4>
+          <div className="flex flex-wrap justify-center"style={{marginLeft:'-18%'}}>
+      {currentCards.map((demande) => (
+        <div key={demande.id} className="w-1/3 px-4 py-4" style={{ width:'300px'}}>
+          <Link to={`/detailFormationaccueil?idFormation=${demande.idFormation}&titre=${encodeURIComponent(demande.titre.replace(/ /g, '_'))}`}>
+          
+            <div className="bg-white shadow-lg rounded-lg transition duration-300 hover:scale-105">
+              <img
+                src={`data:image/jpeg;base64,${demande.image.toString('base64')}`}
+                alt="personne"
+                className="w-full h-64 object-cover rounded-t-lg"
+              />
+              <div className="p-4">
+                <h2 className="text-xl font-bold mb-2 overflow-hidden truncate">{demande.titre}</h2>
+                <h5 className="text-gray-700 overflow-hidden truncate">{demande.nomCategorie}</h5>
+                <p className="text-gray-700 overflow-hidden truncate">{demande?.monFormateur?.nom} {demande?.monFormateur?.prenom}</p>
+
+                <div>
+  {moyennes[demande.idFormation] !== null && (
+    <div>
+      <div>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <span key={index}>
+            {  parseFloat(moyennes[demande.idFormation]) >= index + 1 ? ( // Utiliser Math.floor pour arrondir la moyenne à l'entier inférieur
+              <FontAwesomeIcon icon={solidStar} style={{ color: 'gold' }} />
+            ) : (
+              <FontAwesomeIcon icon={regularStar} style={{ color: 'gold' }} />
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+
+                  {Number(demande.prix) !== 0 ? (
+                      <div className="mt-4 flex items-center">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 text-blue-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+
+                        <div className="ml-2 text-sm text-gray-600">
+                        {Number(demande.prix).toLocaleString('en-EN').replace('.', '')} Ariary
+                      </div>
+                    </div>
+                  ): ( demande.nomTypesAcces==='Gratuit'?(
+                    <div className="mt-4 flex items-center">
+
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                           stroke="currentColor" className="w-6 h-6 text-blue-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                      </svg>
+                      <div className="ml-2 text-sm text-gray-600">
+                  {demande.nomTypesAcces}
+                    </div>
+                    </div>
+                    ):(
+
+                      <div className="mt-4 flex items-center">
+
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-500">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                          </svg>
+                        <div className="ml-2 text-sm text-gray-600">
+                          {demande.nomTypesAcces}
+                        </div>
+                      </div>
+
+                   ))}
+
+              </div>
+            </div>
+          </Link>
+        </div>
+      ))}
+
+      {/* Pagination controls */}
+      <div className="w-full flex justify-center mt-4">
+        {Array.from({ length: Math.ceil(demande.length / cardsPerPage) }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => paginate(page)}
+            className={`mx-2 px-3 py-2 rounded-full ${
+              page === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+    </div>
+
+        </>
+      )}
+
+
+    </>
+    
     );
+
 };
 
 export default Profilformateur;

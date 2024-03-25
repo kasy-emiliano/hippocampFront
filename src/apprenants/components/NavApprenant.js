@@ -1,11 +1,26 @@
 import React from 'react';
+ 
+import { Link,useLocation } from 'react-router-dom';
 
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import images from "@/images/Logo2.png";
+ 
 
-import { useLocation } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook,faLinkedin,faTwitter,faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { faEnvelope,faPhone } from '@fortawesome/free-solid-svg-icons';
+import Logo2 from "@/images/Logo2.png";
+
+import { FaCog } from 'react-icons/fa';
+import { Fragment } from 'react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+
+
+const handleLogout = () => {
+  // Nettoyage du localStorage
+  localStorage.clear();
+  // Autres actions de déconnexion, comme rediriger l'utilisateur vers la page de connexion
+};
+
 
 const user = {
   name: 'Tom Cook',
@@ -13,48 +28,58 @@ const user = {
   imageUrl:
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
-const navigation = [
-  { name: 'Accueil', href: '/coursapprenant' },
-  { name: 'Mes cours', href: '/mescoursapprenant'},
-  // { name: 'Progression', href: '#'},
-  // { name: 'Chat', href: '#'},
-]
 const userNavigation = [
   { name: 'Profil', href: '/modifapprenant' },
   { name: 'Paramètre', href: '/modifpassword' },
-  { name: 'Se déconnecter', href: '/signin' },
+  { name: 'Se déconnecter', href: '/signin',onClick: handleLogout },
 ]
+ 
+
+const navigation = [
+ { name: 'Liste des formations', href: '/coursapprenant' },
+  { name: 'Mes cours', href: '/mescoursapprenant'},
+    // { name: 'Progression', href: '#'},
+    // { name: 'Chat', href: '#'},
+  ]
+const style = {
+    marginLeft: '0%',
+    width: '23%', 
+    height: '0%',
+
+  };
+  
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-const NavApprenant = () => {
+const NavbarAccuiel = () => {
     const location = useLocation();
+
     return (
-   
+    
+             
+             
           <div className="flex flex-wrap justify-between items-center">
             <div className="flex justify-start items-center">
             <Disclosure as="nav" className="bg-gray-800  dark:bg-gray-800 dark:border-gray-700 
-            fixed left-0 right-0 top-0 z-50">
+            fixed left-0 right-0 top-0 z-50" style={{backgroundColor:'#082A4D',top: 25}}>
             {({ open }) => (
               <>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                   <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <img
-                          className="h-20 w-20"
-                          src={images}
-                          alt="Your Company"
-                        />
+                      <Link to="/coursapprenant" class="flex items-center">
+                <img src={Logo2} class="mr-3 h-8 w-18 sm:h-9" alt="Flowbite Logo" style={style} />
+            </Link>
                       </div>
                       <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">
                           {navigation.map((item) => (
                             <a
                               key={item.name}
-                              href={item.href}
+                              href={item.href} onClick={item.onClick}
                               className={classNames(
                                 location.pathname === item.href
                                 ? 'bg-gray-900 text-white'
@@ -71,14 +96,7 @@ const NavApprenant = () => {
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-4 flex items-center md:ml-6">
-                        <button
-                          type="button"
-                          className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                        >
-                          <span className="absolute -inset-1.5" />
-                          <span className="sr-only">View notifications</span>
-                          <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        </button>
+                       
   
                         {/* Profile dropdown */}
                         <Menu as="div" className="relative ml-3">
@@ -86,7 +104,7 @@ const NavApprenant = () => {
                             <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                               <span className="absolute -inset-1.5" />
                               <span className="sr-only">Open user menu</span>
-                              <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                              <FaCog style={{color:'white'}} size={24}/>
                             </Menu.Button>
                           </div>
                           <Transition
@@ -121,6 +139,7 @@ const NavApprenant = () => {
                     </div>
                     <div className="-mr-2 flex md:hidden">
                       {/* Mobile menu button */}
+                      
                       <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-0.5" />
                         <span className="sr-only">Open main menu</span>
@@ -160,14 +179,6 @@ const NavApprenant = () => {
                         <div className="text-base font-medium leading-none text-white">{user.name}</div>
                         <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
                       </div>
-                      <button
-                        type="button"
-                        className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only">View notifications</span>
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
                     </div>
                     <div className="mt-3 space-y-1 px-2">
                       {userNavigation.map((item) => (
@@ -191,9 +202,10 @@ const NavApprenant = () => {
             
             </div>
           </div>
+          
+          
 
-    
     );
 };
 
-export default NavApprenant;
+export default NavbarAccuiel;
