@@ -148,6 +148,7 @@ const FormationList = () => {
                 <Table.HeadCell>
                   Actions
                 </Table.HeadCell>
+ 
              
 
               </Table.Head>

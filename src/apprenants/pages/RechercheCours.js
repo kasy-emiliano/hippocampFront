@@ -44,7 +44,7 @@ const [selectedAccesId, setSelectedAccesId] = useState("");
 
   useEffect(() => {
     // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
-    axios.get("/RechercheFormation?categorie="+idCategorie+ "&TypesAcces="+ idTypeAcces+ "&mot="+ idTexte)
+    axios.get("/RechercheFormationDeux?categorie="+idCategorie+ "&TypesAcces="+ idTypeAcces+ "&mot="+ idTexte)
       .then((response) => {
         setDemandes(response.data.recherche);
         setUserDetailsResponse(response.data.f);

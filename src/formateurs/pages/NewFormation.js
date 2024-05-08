@@ -29,6 +29,9 @@ const [typesAcces, setTypesAcces] = useState('1');
 const [prix, setPrix] = useState('0');
 const [langue, setLangue] = useState('1');
 
+const [etatPublication, setetatPublication] = useState('1');
+
+
 const [photo, setPhoto] = useState();
 
 // const [isPayant, setIsPayant] = useState(false); // État pour déterminer si l'accès est payant
@@ -65,6 +68,11 @@ useEffect(() => {
 }, [typesAcces]);
 
 
+
+const handlesetetatPublication = (e) => {
+  setetatPublication(e.target.value);
+};
+
     const handleEditorChange = (event, editor) => {
       const data = editor.getData();
       setContent(data);
@@ -91,6 +99,7 @@ useEffect(() => {
       formData.append('photo', photo);
       formData.append('resumer', content);
       formData.append('token', token);
+      formData.append('etatPublication',etatPublication);
 
       
       const config = {
@@ -250,6 +259,24 @@ useEffect(() => {
                          <img src={photo} />
                        </div>
              
+
+                       <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    
+                </label>
+                <div>
+                    <label style={{color:'red'}}>
+                        <input 
+                            type="checkbox"
+                            name="etatPublication"
+                            value="2"
+                            onChange={handlesetetatPublication}
+                        />
+                            Obligatoire si vous êtes pas un formateur dans l'Hippocamp  
+                    </label>
+                </div>
+                </div>
+
                        <div className="sm:col-span-2">
                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="resume" id="resume">
                              Résumé

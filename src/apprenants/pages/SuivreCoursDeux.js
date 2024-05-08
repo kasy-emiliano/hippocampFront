@@ -7,16 +7,17 @@ import 'flowbite';
 import images from "@/images/hIPPOCAMP1.png";
 import axios from '@/api/axios';
 import Cookies from 'js-cookie'; 
-import NavbarAccuiel from '@/apprenants/components/NavbarAccuiel';
-import NavApprenant from '@/apprenants/components/NavApprenant';
+import NavbarAccuielSite from '@/apprenants/components/NavbarAccuielSite';
+import NavApprenantSite from '@/apprenants/components/NavApprenantSite';
 
 
 
-function SuivreCours() {
+function SuivreCoursDeux() {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const idFormation = queryParams.get('idFormation');
+  const nomespace = queryParams.get('nomespace');
 
   const token = Cookies.get('token');
 
@@ -70,9 +71,8 @@ function SuivreCours() {
 
     return (
       <>
-      <NavbarAccuiel/>
-  
-  <NavApprenant/>
+    <NavbarAccuielSite/>
+    <NavApprenantSite/>
   
         <div className="antialiased bg-gray-50 dark:bg-gray-900">
        
@@ -142,7 +142,7 @@ function SuivreCours() {
                                               </svg>
 
                                                   <Link className="font-medium text-gray-500 hover:underline dark:text-gray-500 mb-2" 
-                                                        to={`lessonapprenant?idSousChapitres=${lesson.idSousChapitres}&idFormation=${idFormation}&token=${token}`}>
+                                                        to={`LessonApprenantDeux?idSousChapitres=${lesson.idSousChapitres}&idFormation=${idFormation}&nomespace=${nomespace}&token=${token}`}>
                                                         <p> {lesson.titre}</p>
                                                   </Link>
                                                   {isLessonAvailable = true}
@@ -193,7 +193,7 @@ function SuivreCours() {
                                
                                 <p key={quiz.idQuiz} value={quiz.idQuiz} className="text-blue-500 ml-4">
                                     <Link className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 mb-2" 
-                                    to={`detailquizapprenant?idQuiz=${quiz.idQuiz}&idFormation=${idFormation}`}>
+                                    to={`DetailQuizApprenantDeux?idQuiz=${quiz.idQuiz}&nomespace=${nomespace}&idFormation=${idFormation}`}>
                                       {quiz.titre}
                                     </Link>
                                 </p>
@@ -225,12 +225,12 @@ function SuivreCours() {
                         <Accordion.Panel>
 
                             <Link className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 mb-2" 
-                                 to={`detailExamenApprenant?idExamen=${exam.idExamen}&idFormation=${idFormation}`}>
+                                 to={`detailExamenApprenantDeux?idExamen=${exam.idExamen}&nomespace=${nomespace}&idFormation=${idFormation}`}>
                                     
                               {exam.titreExamen}
                               
                               <Link style={{marginLeft:'40%'}} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 mb-2" 
-      to={`ApprenantAdmis?idExamen=${exam.idExamen}&token=${token}&idFormation=${idFormation}`}>
+      to={`ApprenantAdmis?idExamen=${exam.idExamen}&token=${token}&nomespace=${nomespace}&idFormation=${idFormation}`}>
       Voir resultat
 </Link>
     
@@ -301,4 +301,4 @@ function SuivreCours() {
     );
 }
 
-export default SuivreCours;
+export default SuivreCoursDeux;

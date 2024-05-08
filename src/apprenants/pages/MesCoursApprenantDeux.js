@@ -3,20 +3,23 @@ import { useState, useEffect } from 'react';
 import axios from '@/api/axios';
 import { useLocation, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import NavbarAccuiel from '@/apprenants/components/NavbarAccuiel';
-import NavApprenant from '@/apprenants/components/NavApprenant';
 import NavbarAccuielSite from '@/apprenants/components/NavbarAccuielSite';
 import NavApprenantSite from '@/apprenants/components/NavApprenantSite';
 
 const MesCoursApprenant = () => {
   const token = Cookies.get('token');
   const [demandes, setDemandes] = useState([]);
-   
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const nomespace = queryParams.get('nomespace');
+
 
   useEffect(() => {
     // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
     axios
-      .get('/MesFormationSuivies?token=' + token)
+      .get('/MesFormationSuiviesDeux?token=' + token+'&nomespace='+ nomespace)
+      
       .then((response) => {
         setDemandes(response.data);
       })
@@ -28,12 +31,10 @@ const MesCoursApprenant = () => {
   
 
   return (
-    
-
     <>
-    <NavbarAccuiel/>
-
-<NavApprenant/>
+    <NavbarAccuielSite/>
+    <NavApprenantSite/>
+    
 
     <div className="flex flex-col items-center justify-center h-full mt-20 bg-white">
       <div className="text-center mb-8">
@@ -45,7 +46,7 @@ const MesCoursApprenant = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {demandes.map((cours) => (
           <div key={cours.id} className="w-full px-4 py-6 bg-white shadow-lg rounded-lg transition duration-300 transform hover:scale-105">
-          <Link to={`/suivrecours?idFormation=${cours.idFormation}`}>
+          <Link to={`/suivrecoursDeux?idFormation=${cours.idFormation}&nomespace=${nomespace}`}>
             <img
               src={`data:image/jpeg;base64,${cours.image.toString('base64')}`}
               alt="Card Image"
@@ -67,7 +68,6 @@ const MesCoursApprenant = () => {
     )}
   </div>
   </>
-
   );
   
 };

@@ -104,7 +104,7 @@ const Head = () => {
   const [moyennes, setMoyennes] = useState({});
   
   useEffect(() => {
-    axios.get("/RechercheFormation?categorie="+""+"&TypesAcces="+ ""+"&mot="+"")
+    axios.get("/RechercheFormationDeux?categorie="+""+"&TypesAcces="+ ""+"&mot="+"")
       .then(async (response) => {
         setDemandes(response.data.recherche);
 

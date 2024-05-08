@@ -8,8 +8,8 @@ import { useLocation,Link} from 'react-router-dom';
 import Header from '@/components/Header';
 
 import { useState, useEffect } from 'react';
-import NavbarAccuiel from '@/apprenants/components/NavbarAccuiel';
-import NavApprenant from '@/apprenants/components/NavApprenant';
+import NavbarAccuielSite from '@/apprenants/components/NavbarAccuielSite';
+import NavApprenantSite from '@/apprenants/components/NavApprenantSite';
 
 
 import Swal from 'sweetalert2';
@@ -135,7 +135,38 @@ const ListCoursApprenant = () => {
 
 */
 
+   const nomespace = queryParams.get('nomespace');
 
+
+  const [couleurPrincipale, setCouleurPrincipale] = useState(''); 
+    const [couleurArrierePlan, setCouleurArrierePlan] = useState(''); 
+    const [CouleurTitre, setCouleurTitre] = useState('');
+    const [couleurText, setCouleurText] = useState('');
+    const [couleurBouton, setCouleurBouton] = useState(''); 
+    const [couleurtextBouton, setCouleurTextBouton] = useState('');  
+
+    useEffect(() => {
+      // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
+      axios.get("/ListConfigPageNom?nomespace=" + nomespace)
+        .then((response) => {
+          // Vérifiez si des données ont été renvoyées
+          if (response.data && response.data.length > 0) {
+            const configPage = response.data[0]; // Accédez au premier élément du tableau (ou ajustez selon votre logique)
+    
+            // Mise à jour des états avec les données récupérées
+            setCouleurPrincipale(configPage.couleurPrincipale);
+            setCouleurArrierePlan(configPage.couleurArrierePlan);
+            setCouleurTitre(configPage.couleurTitre);
+            setCouleurText(configPage.couleurText);
+            setCouleurBouton(configPage.couleurBouton);
+            setCouleurTextBouton(configPage.couleurtextBouton);
+    
+          }
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+        });
+    }, [nomespace]);
 
  
 
@@ -275,7 +306,7 @@ const ListCoursApprenant = () => {
               text: 'Vous pouvez consulter le cours',
               footer: '<a href=""></a>'
             });
-            window.location.href="/SuivreCours?idFormation="+idFormation+ "&token="+ token;
+            window.location.href="/suivreCoursDeux?idFormation="+idFormation+ "&token="+ token+"&nomespace="+nomespace;
     
   };
     
@@ -387,10 +418,8 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
     return (
 
         <>
-         
-         <NavbarAccuiel/>
-
-        <NavApprenant/>
+         <NavbarAccuielSite/>
+<NavApprenantSite/>
 
 <br></br>
 <br></br>
@@ -405,7 +434,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
     )}
   </div>
   <div className="absolute bottom-8 left-0 w-full flex justify-center">
-    <h1 style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', backgroundColor:'#0096BB', transform: 'translateY(70%)' }} className="text-5xl font-medium w-full md:w-1/2 mr-auto">{demandes.titre}</h1>
+    <h1 style={{ color: CouleurTitre, textAlign: 'center', fontWeight: 'bold', backgroundColor:couleurArrierePlan, transform: 'translateY(70%)' }} className="text-5xl font-medium w-full md:w-1/2 mr-auto">{demandes.titre}</h1>
   </div>
 </div>
 <br></br>
@@ -439,7 +468,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
           <div className="bg-white border border-gray-300 shadow-lg rounded-lg transition duration-300 ">
             
             <div className="p-4">
-            <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Formations</h4>
+            <h4  style={{ color: 'white', textAlign: 'center', backgroundColor:couleurArrierePlan}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Formations</h4>
               <p className="text-gray-700"> <ContentDisplay content={demandes.resumer} /></p>
               <br></br>
               <p>Vous pouvez également voir ci-dessous les contenues pedagogique :</p>
@@ -455,7 +484,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
       {contentSelectedChap === 'chapitre' && (
         <div>
           
-          <h4  style={{ color: 'white',  textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Chapitres</h4>
+          <h4  style={{ color: 'white',  textAlign: 'center', backgroundColor: couleurArrierePlan}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Chapitres</h4>
           <ChapitreApprenant />
         </div>
       )}
@@ -463,7 +492,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
       {contentSelectedWeb === 'webinar' && (
         
         <div>
-          <h4  style={{ color: 'white',  textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Quiz</h4>
+          <h4  style={{ color: 'white',  textAlign: 'center', backgroundColor: couleurArrierePlan}} className="entry-info text-3xl w-full md:w-1/2 mr-auto">Quiz</h4>
 
           <ZoomApprenant />
         </div>
@@ -491,7 +520,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
                      
                     <div className="overflow-x-auto">
                       
-                    <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#0096BB'}} className="entry-info text-3xl w-full md:w-1/1 mr-auto">Formateur</h4>
+                    <h4  style={{ color: 'white', textAlign: 'center', backgroundColor:couleurArrierePlan}} className="entry-info text-3xl w-full md:w-1/1 mr-auto">Formateur</h4>
                         <div className="bg-white-400 p-4 rounded-lg shadow-lg relative justify-between items-start md:items-center 
                                         space-y-3 md:space-y-0 md:flex-row ">
                                                    
@@ -580,7 +609,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
                             <br/>
                         </div>
 <br/>
-<button style={{backgroundColor:'#0096BB',color:'white',marginLeft:'-80%',width:'100%',height:'60%'}}
+<button style={{backgroundColor:couleurBouton,color:couleurText,marginLeft:'-80%',width:'100%',height:'60%'}}
                   className="flex items-center mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
                   focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 
                   dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  
@@ -613,10 +642,10 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
                 </div>
                 
       
-<form className="box font-medium w-full md:w-1/2 ml-auto" onSubmit={handleNoteSubmit} style={{ color: '#0096BB', textAlign: 'center', fontWeight: 'bold',marginLeft:'30%' }}>
+<form className="box font-medium w-full md:w-1/2 ml-auto" onSubmit={handleNoteSubmit} style={{ color:couleurText, textAlign: 'center', fontWeight: 'bold',marginLeft:'30%' }}>
         <input type="hidden" name="idFormation" value={idFormation} />
          
-        <legend>Noter cette formation</legend>
+        <legend style={{color:couleurText}}>Noter cette formation</legend>
         <p></p>
         <Rating name='note' value={note} onChange={(e) => setNombreEtoiles(e.target.value)} style={{ display: 'block', margin: 'auto' }} />
         <h2 style={{ color: '#0096BB', textAlign: '', fontWeight: 'bold' }}></h2>
@@ -629,7 +658,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
                 </li>
             ))}
         </ul>
-        <button type="submit" className="px-4 py-2 bg-blue-300 text-blue-700 rounded-md text-sm">Note</button>
+        <button style={{color:couleurText,backgroundColor:couleurBouton}} type="submit" className="px-4 py-2 bg-blue-300 text-blue-700 rounded-md text-sm">Note</button>
     </form>
 
 </div>
@@ -640,18 +669,18 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
   {/* Section des commentaires à droite */}
   <div className="flex-grow">
     <div>
-      <h2 style={{ color: '#082A4D', fontWeight: 'bold',marginLeft:'5%' }}>COMMENTAIRES :</h2>
+      <h2 style={{ color: CouleurTitre, fontWeight: 'bold',marginLeft:'5%' }}>COMMENTAIRES :</h2>
       <br></br>
       <ul className="text-left ml-10">
         {commentaires.slice(0, nombreCommentairesAffiches).map((commentaire) => (
           <li key={commentaire.idcommentaire} style={styles.commentaireBloc}>
             {commentaire.nomFormateur && commentaire.prenomFormateur && (
-              <strong style={{ color: '#082A4D' }}>
+              <strong style={{ color: CouleurTitre }}>
                 {commentaire.nomFormateur} {commentaire.prenomFormateur}
               </strong>
             )}
             {commentaire.nomApprenant && commentaire.prenomApprenant && (
-              <strong style={{ color: '#082A4D' }}>
+              <strong style={{ color: CouleurTitre }}>
                 {commentaire.nomApprenant} {commentaire.prenomApprenant}
               </strong>
             )}
@@ -671,10 +700,10 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
         {reponsesForComment.slice(0, nombreRCommentairesAffiches).map((commentaire) => (
           <li key={commentaire.idCommentaire} style={style.commentaireBloc}>
             {commentaire.nomFormateur && commentaire.prenomFormateur && (
-              <strong style={{ color: '#082A4D' }}>{commentaire.nomFormateur} {commentaire.prenomFormateur}</strong>
+              <strong style={{ color: CouleurTitre }}>{commentaire.nomFormateur} {commentaire.prenomFormateur}</strong>
             )}
             {commentaire.nomApprenant && commentaire.prenomApprenant && (
-              <strong style={{ color: '#082A4D' }}>{commentaire.nomApprenant} {commentaire.prenomApprenant}</strong>
+              <strong style={{ color: CouleurTitre }}>{commentaire.nomApprenant} {commentaire.prenomApprenant}</strong>
             )}
 
             <br />
@@ -702,7 +731,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mb-2"
           placeholder="Saisissez votre réponse..."
         />
-        <button style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
+        <button style={{backgroundColor:couleurBouton,color:couleurText}} type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
           Répondre
         </button>
       </form>
@@ -736,7 +765,7 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
         placeholder="Saisissez votre commentaire..."
       />
       <input type="hidden" name="idFormation" value={idFormation} />
-      <button style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
+      <button style={{backgroundColor:couleurBouton,color:couleurText}} type="submit" className="px-8 py-2 bg-blue-500 text-white rounded-md">
         Ajouter votre commentaire
       </button>
     </form>
@@ -749,7 +778,6 @@ const [contentSelectedWeb, setContentSelectedWeb] = useState('webinar'); // Déf
     
 <br></br>
 <br></br>
-      <Footer/>
     </>
     );
 };

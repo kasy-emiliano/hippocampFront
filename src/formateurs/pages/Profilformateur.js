@@ -38,11 +38,16 @@ const Profilformateur = () => {
     const queryParams = new URLSearchParams(location.search);
   const tokenform = queryParams.get('tokenform');
   const tokenTsotra = queryParams.get('tokentsotra');
+  const tokenAp = queryParams.get('tokenAp');
+
   //const apprenantMur = queryParams.get('apprenantMur');
 
 
      
-    const token = Cookies.get('token'); 
+    const token = Cookies.get('token');
+    const tokenApprenant = Cookies.get('token');
+    
+
    
     useEffect(() => {
         // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
@@ -146,8 +151,27 @@ const Profilformateur = () => {
               console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
             });
         }, []);
+
+      const [apprenant, setApprenant] = useState([]);
+
+
+      useEffect(() => {
+        axios.get("/idApprenant?token="+tokenApprenant)
+          .then((response) => {
+            // Assurez-vous que la réponse contient des données avant de les traiter
+            if (response.data && response.data.length > 0) {
+              // Mise à jour de l'état avec le premier objet Apprenant de la réponse
+              setApprenant(response.data[0]);
+            }
+          })
+          .catch((error) => {
+            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+          });
+      }, []);
         
   
+         
+
     return (
         <>
          
@@ -186,7 +210,12 @@ const Profilformateur = () => {
 <br></br>
 <br></br>
     
-    
+
+
+<form className="box font-medium w-full md:w-1/3 ml-auto flex justify-center">
+        <Link to={`/MessageApprenant?idFormateur=${demandes.idFormateur}&idApprenant=${apprenant.idApprenant}`} style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-300 text-blue-700 rounded-md text-sm" >Message</Link>
+        
+    </form>
 <div className="bg-white border border-gray-300 shadow-lg rounded-lg transition duration-300 " style={{marginLeft:'-5%'}}>
             
             <div className="p-4">
@@ -310,7 +339,6 @@ const Profilformateur = () => {
         <NavApprenant/>
           
           <br></br>
- 
 <div className="relative ">
   <div className="md:w lg:w- mx-auto px-4 py-4" style={{marginLeft:'-18%'}}>
     {demandes.pdp && (
@@ -322,7 +350,8 @@ const Profilformateur = () => {
     )}
     <h2 style={{marginLeft:'19%',marginTop:20,fontWeight: 'bold'}} className="entry-info text-4xl w-full md:w-1/2 mr-auto">{demandes.nom} {demandes.prenom}</h2>
     <form className="box font-medium w-full md:w-1/3 ml-auto flex justify-center">
-        <button style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-300 text-blue-700 rounded-md text-sm" >Message</button>
+        <Link to={`/MessageFormateur?idFormateur=${demandes.idFormateur}&idApprenant=${apprenant.idApprenant}`} style={{backgroundColor:'#0096BB',color:'white'}} type="submit" className="px-8 py-2 bg-blue-300 text-blue-700 rounded-md text-sm" >Message</Link>
+        
     </form>
   </div>
   <div className="absolute bottom-10 flex justify items-center h-1 rounded-full" style={{marginLeft:'-15%'}}>
@@ -341,6 +370,7 @@ const Profilformateur = () => {
 </div>
 </div>
   
+  {tokenApprenant} aiza eo: {apprenant.nom} {apprenant.prenom}
 <br></br>
 <br></br>
 <br></br>
@@ -356,6 +386,7 @@ const Profilformateur = () => {
 <br></br>
  <h4  style={{ color: 'white', textAlign: 'center', backgroundColor: '#F39530'}} className="entry-info text-3xl w-full md:w-1/4 mr-auto">Contacts</h4>
               <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faPhone}/> : {demandes.numero }</p>
+ 
 
               <p className="text-gray-700 mx-4" > <FontAwesomeIcon icon={faEnvelope}/> : {demandes.email }</p>
 

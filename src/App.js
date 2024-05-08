@@ -10,23 +10,39 @@ import ConnexionChoix from '@/pages/ConnexionChoix';
 import LandingPage from '@/pages/LandingPage';
 
 import SignIn from '@/apprenants/pages/SignIn';
+import SignInApprenant from '@/apprenants/pages/SignInApprenant';
 import SignUp from '@/apprenants/pages/SignUp';
 import ProfilForm from '@/apprenants/pages/ProfilForm';
 import CoursApprenant from '@/apprenants/pages/CoursApprenant';
+import ApprenantCours from '@/apprenants/pages/ApprenantCours';
 import RechercheCours from '@/apprenants/pages/RechercheCours';
 import ListCoursApprenant from '@/apprenants/pages/ListCoursApprenant';
+import ListCoursApprenantDeux from '@/apprenants/pages/ListCoursApprenantDeux';
 import ListeFormationAcceuil from '@/apprenants/pages/ListeFormationAcceuil';
 import DetailFormationAccueil from '@/apprenants/pages/DetailFormationAccueil';
+import DetailFormationAccueilDeux from '@/apprenants/pages/DetailFormationAccueilDeux';
 import ChapitreApprenant from '@/apprenants/pages/ChapitreApprenant';
 import QuizApprenant from '@/apprenants/pages/QuizApprenant';
 import ZoomApprenant from '@/apprenants/pages/ZoomApprenant';
 import SuivreCours from '@/apprenants/pages/SuivreCours';
+import SuivreCoursDeux from '@/apprenants/pages/SuivreCoursDeux';
 import LessonApprenant from '@/apprenants/pages/LessonApprenant';
+import LessonApprenantDeux from '@/apprenants/pages/LessonApprenantDeux';
 import ListQuizApprenant from '@/apprenants/pages/ListQuizApprenant';
+import ListExamenApprenant from '@/apprenants/pages/ListExamenApprenant';
+import ListExamenApprenantDeux from '@/apprenants/pages/ListExamenApprenantDeux';
+import ListQuizApprenantDeux from '@/apprenants/pages/ListQuizApprenantDeux';
 import ListZoomApprenant from '@/apprenants/pages/ListZoomApprenant';
 import DetailQuizApprenant from '@/apprenants/pages/DetailQuizApprenant';
+import DetailQuizApprenantDeux from '@/apprenants/pages/DetailQuizApprenantDeux';
+import DetailExamenApprenant from '@/apprenants/pages/DetailExamenApprenant';
+import DetailExamenApprenantDeux from '@/apprenants/pages/DetailExamenApprenantDeux';
 import MesCoursApprenant from '@/apprenants/pages/MesCoursApprenant';
+import MesCoursApprenantDeux from '@/apprenants/pages/MesCoursApprenantDeux';
 import NavExemple from '@/apprenants/pages/NavExemple';
+import MessageApprenant from '@/apprenants/pages/MessageApprenant';
+import ApprenantAdmis from '@/apprenants/pages/ApprenantAdmis';
+
 
 import AdhesionForm from '@/formateurs/pages/AdhesionForm';
 
@@ -93,6 +109,11 @@ import Modalform from '@/formateurs/pages/Modalform';
 import Chapitre from '@/formateurs/pages/Chapitre';
 import Zoom from '@/formateurs/pages/Zoom';
 import Quiz from '@/formateurs/pages/Quiz';
+import Examens from '@/formateurs/pages/Examens';
+import CertificatPdf from '@/formateurs/pages/CertificatPdf';
+import ConfigEspace from '@/formateurs/pages/ConfigEspace';
+import ConfigPage from '@/formateurs/pages/ConfigPage';
+import SiteFormateur from '@/formateurs/pages/SiteFormateur';
 
 import Dashboardapprenant from '@/apprenants/pages/Dashboardapprenant';
 
@@ -104,12 +125,15 @@ import DashboardFormateur from '@/formateurs/pages/DashboardFormateur';
 import NewFormation from '@/formateurs/pages/NewFormation';
 
 import FormationList from '@/formateurs/pages/FormationList';
+import MesApprenantFormation from '@/formateurs/pages/MesApprenantFormation';
+import MesApprenantInscit from '@/formateurs/pages/MesApprenantInscit';
 
 import Detailform from '@/formateurs/pages/Detailform';
 
 import ApprenantList from '@/formateurs/pages/ApprenantList';
 
 import Profilformateur from '@/formateurs/pages/Profilformateur';
+import MessageFormateur from '@/formateurs/pages/MessageFormateur';
 
 
 import Video from '@/formateurs/pages/Video';
@@ -119,6 +143,7 @@ import Videochoice from '@/formateurs/pages/Videochoice';
 import AddLesson from '@/formateurs/pages/AddLesson';
 
 import AddQuiz from '@/formateurs/pages/AddQuiz';
+import AddExamen from '@/formateurs/pages/AddExamen';
 
 import AddReponseQuiz from '@/formateurs/pages/AddReponseQuiz';
 
@@ -147,6 +172,7 @@ function App() {
                 <Route path="/landingpage" element={<LandingPage/>}/>
                 <Route path="/signup" element={<SignUp/>}/>
                 <Route path="/signin" element={<SignIn/>}/>
+                <Route path="/signinApprenant" element={<SignInApprenant/>}/>
                 <Route path="/profilForm" element={<ProfilForm/>}/>
                 <Route path="/adhesionform" element={<AdhesionForm/>}/>
                 
@@ -199,12 +225,18 @@ function App() {
                 <Route path="" element={<DashboardFormateur/>}>
                     <Route path="dashboardformateur" element={<DashboardFormateur/>}/>
                     <Route path="formationList" element={<FormationList />}/>
+                    <Route path="MesApprenantFormation" element={<MesApprenantFormation />}/>
+                    <Route path="MesApprenantInscit" element={<MesApprenantInscit />}/>
                     <Route path="newformation" element={<NewFormation />}/>
                     <Route path="detailform" element={<Detailform/>}/>
                     <Route path="apprenantlist" element={<ApprenantList/>}/>
                     <Route path="voirlistform" element={<VoirListForm/>}/>
                     <Route path="modifierphoto" element={<ModifierPhoto/>}/>
                     <Route path="profilformateur" element={<Profilformateur/>}/>
+                    <Route path="certificatPdf" element={<CertificatPdf/>}/>
+                    <Route path="ConfigEspace" element={<ConfigEspace/>}/>
+                    <Route path="configPage" element={<ConfigPage/>}/>
+                    <Route path="messageFormateur" element={<MessageFormateur/>}/>
                 </Route>
 
                 {/*Route Formateur simple*/}
@@ -217,41 +249,64 @@ function App() {
                     <Route path="/zoomadmin" element={<ZoomAdmin/>}/>
                     <Route path="/quizadmin" element={<QuizAdmin/>}/>
                 </Route>
+ 
 
-                   {/*Route Cours Apprenant*/}
-                <Route path="" element={<Dashboardapprenant/>}>
-                   <Route path="coursapprenant" element={<CoursApprenant/>}/>
-                   <Route path="recherchecours" element={<RechercheCours/>}/>
-                   <Route path="mescoursapprenant" element={<MesCoursApprenant/>}/>
-                </Route>
-
+                   <Route path="/recherchecours" element={<RechercheCours/>}/>
+                <Route path="/coursapprenant" element={<CoursApprenant/>}/>
 
                 
         
         {/* Utilisez Route pour définir la route qui inclut le titre de la formation */}
+                   <Route path="/mescoursapprenant" element={<MesCoursApprenant/>}/>
+
+        <Route path="/mescoursapprenantDeux" element={<MesCoursApprenantDeux/>}/>
+
         <Route path="/listcoursapprenant" element={<ListCoursApprenant />} />
+        <Route path="/listcoursapprenantDeux" element={<ListCoursApprenantDeux />} />
         <Route path="/reponsecommentaireform" element={<ReponseCommentaireForm />} />
+        <Route path="/ApprenantCours" element={<ApprenantCours/>}/>
         <Route path="/listeFormationacceuil" element={<ListeFormationAcceuil />} />
         <Route path="/detailFormationaccueil" element={<DetailFormationAccueil />} />
+        <Route path="/detailFormationaccueilDeux" element={<DetailFormationAccueilDeux />} />
+        <Route path="/SiteFormateur" element={<SiteFormateur />} />
        
       
-                {/*<Route path="/listcoursapprenant" element={<ListCoursApprenant/>}/> */}
+                {<Route path="/MessageApprenant" element={<MessageApprenant/>}/> }
 
 
 
                 <Route path="/chapitreapprenant" element={<ChapitreApprenant/>}/>
                 <Route path="/zoomapprenant" element={<ZoomApprenant/>}/>
                 <Route path="/quizapprenant" element={<QuizApprenant/>}/>
+ 
+                <Route path="suivrecours" element={<SuivreCours/>}>  
 
-                <Route path="suivrecours" element={<SuivreCours/>}> 
+                <Route path="suivrecoursDeux" element={<SuivreCoursDeux/>}/> 
+
                     <Route path="lessonapprenant" element={<LessonApprenant/>}/> 
                     <Route path="listzoomapprenant" element={<ListZoomApprenant/>}/>
               
              
                     <Route path="detailquizapprenant" element={<DetailQuizApprenant/>}/> 
+                <Route path="ApprenantAdmis" element={<ApprenantAdmis/>}/> 
+                    <Route path="detailExamenApprenant" element={<DetailExamenApprenant/>}/> 
         
                 </Route>
+
+
+                <Route path="suivrecoursDeux" element={<SuivreCoursDeux/>}> 
+                <Route path="LessonApprenantDeux" element={<LessonApprenantDeux/>}/>
+                <Route path="DetailQuizApprenantDeux" element={<DetailQuizApprenantDeux/>}/>
+                <Route path="detailExamenApprenantDeux" element={<DetailExamenApprenantDeux/>}/> 
+ 
+                <Route path="ApprenantAdmis" element={<ApprenantAdmis/>}/> 
+        
+                </Route>
+
                 <Route path="/listquizapprenant" element={<ListQuizApprenant/>}/>
+                <Route path="/listExamenApprenant" element={<ListExamenApprenant/>}/>
+                <Route path="/listExamenApprenantDeux" element={<ListExamenApprenantDeux/>}/>
+                <Route path="/ListQuizApprenantDeux" element={<ListQuizApprenantDeux/>}/>
              
 
                 {/**Exemple fotsiny */}
@@ -303,6 +358,7 @@ function App() {
                     <Route path="/chapitre" element={<Chapitre/>}/>
                     <Route path="/zoom" element={<Zoom/>}/>
                     <Route path="/quiz" element={<Quiz/>}/>
+                    <Route path="/examens" element={<Examens/>}/>
                 </Route>
 
 
@@ -315,10 +371,12 @@ function App() {
                 <Route path="/addlesson" element={<AddLesson/>}/>
 
                 <Route path="/addquiz" element={<AddQuiz/>}/>
+                <Route path="/addExamen" element={<AddExamen/>}/>
                 <Route path="/listquiz" element={<ListQuiz/>}/>
 
                 <Route path="/signupchoice" element={<SignupChoice/>}/>
                 <Route path="/connexionChoix" element={<ConnexionChoix/>}/>
+
 
 
                 <Route path="/addreponsequiz" element={<AddReponseQuiz/>}/>
