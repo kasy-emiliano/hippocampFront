@@ -21,6 +21,21 @@ const ApprenantList = () => {
   const idFormation = queryParams.get('idFormation');
   const token = Cookies.get('token');
   const [Formateur, setFormateur] = useState([]);
+  const [ListeMessage, setListeMessage] = useState([]);
+
+  useEffect(() => {
+    axios.get("/MessagePrive?token="+token)
+      .then((response) => {
+        // Assurez-vous que la réponse contient des données avant de les traiter
+        if (response.data && response.data.length > 0) {
+          // Mise à jour de l'état avec le premier objet Apprenant de la réponse
+          setListeMessage(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+      });
+  }, []);
 
   useEffect(() => {
     // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
@@ -33,21 +48,20 @@ const ApprenantList = () => {
       });
   }, []);
 
- 
-const [demandes, setDemandes] = useState([]);
-
-  useEffect(() => {
-    // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
-    axios.get("/ListApprenantI?idFormation="+ idFormation)
-      .then((response) => {
-        setDemandes(response.data);
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
-      });
-      
-  }, []);
-
+  const handleRowClick = (idApprenant) => {
+    // Appeler la fonction pour mettre à jour la vue ici avec l'ID de l'apprenant
+    updateVue(idApprenant);
+}
+const updateVue = async (idApprenant) => {
+  try {
+      const response = await axios.post("/updateVue?idApprenant=" + idApprenant);
+      if (response.status === 200) {
+      }
+  } catch (error) {
+      console.error(error);
+  }
+}
+  
     return (
 <>
 <Navform/>
@@ -63,31 +77,35 @@ const [demandes, setDemandes] = useState([]);
         <div className="mx-auto max-w-screen-xl px-4 lg:px-2">
             <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden" style={{  marginLeft: "-25px" }}>
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg" >
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <table className="text-sm  rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-white uppercase bg-blue-700 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th scope="col" className="px-4 py-3">Nom</th>
-                                <th scope="col" className="px-4 py-3">Profession</th>
-                                <th scope="col" className="px-4 py-3">Email</th>
-                                <th scope="col" className="px-4 py-3">Téléphone</th>
-                                <th scope="col" className="px-4 py-3">Progression</th>
+                                <th scope="col" className=" py-3">Messages</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                        {demandes.map(demande => (
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-4 py-3">{demande.nom}</td>
-                                <td className="px-4 py-3">{demande.nomProfession}</td>
-                                <td className="px-4 py-3">{demande.email}</td>
-                                <td className="px-4 py-3">{demande.numero}</td>
-                                <td className="px-4 py-3">{demande.progression} %</td>
-                                <Link to={`/MessageApprenant?idFormateur=${Formateur.idFormateur}&idApprenant=${demande.idApprenant}&tokenApprenant=${demande.token}`}
-                         className="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300 mt-4" ><td className="px-4 py-3"
+                        {ListeMessage.map(demande => (
+    <tr
+        className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${demande.vue === 0 ? 'bg-gray-100' : ''}`}
+        key={demande.idApprenant}
+        onClick={() => handleRowClick(demande.idApprenant)}
+    >
+        <Link
+            to={`/MessageApprenant?idFormateur=${Formateur.idFormateur}&idApprenant=${demande.idApprenant}&tokenApprenant=${demande.tokenApprenant}`}
+            className="block w-full h-full"
+        >
+            <td style={{color: demande.vue === 1 ? 'gray' : 'blue', fontWeight: "bold"}} className="px-2 py-3">
+                {demande.nom_apprenant} :
+            </td>
+            <td style={{color: demande.vue === 1 ? 'gray' : 'black'}} className="px-2 py-3">
+                {demande.message}
+            </td>
+        </Link>
+    </tr>
+))}
 
-                        >Envoyer message</td></Link>
-                            </tr>
-                        ))}
-          
+
                         </tbody>
                     </table>
                 </div>

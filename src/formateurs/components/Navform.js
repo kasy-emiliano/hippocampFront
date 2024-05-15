@@ -13,12 +13,10 @@ import Cookies from 'js-cookie';
 
 
 
-// const navigation = [
-//   { name: 'Accueil', href: '/coursapprenant' },
-//   { name: 'Mes cours', href: '/mescoursapprenant'},
-//   // { name: 'Progression', href: '#'},
-//   // { name: 'Chat', href: '#'},
-// ]
+const navigation = [
+  { name: 'Mon profil', href: '/profilformateur' },
+  { name: 'Messages', href: '/ListeMessageFormateur'},
+ ]
 const userNavigation = [
   { name: 'Mon Profil', href: '/profilformateur' },
   { name: 'Modifier Photo', href: '/modifierphoto' },
@@ -28,16 +26,28 @@ const userNavigation = [
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-
-
+ 
 const Navform = () => {
     const location = useLocation();
     const token = Cookies.get('token');
 
    
 const [demandes, setDemandes] = useState([]);
+const [unreadMessages, setUnreadMessages] = useState();
 
-    
+
+useEffect(() => {
+  // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
+  axios.get("/countVue?token=" + token)
+    .then((response) => {
+      setUnreadMessages(response.data);
+      console.log(response.data.image)
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+    });
+}, []);
+
     useEffect(() => {
       // Effectuer une requête HTTP pour récupérer les détails de l'utilisateur et les paramètres de l'utilisateur
       axios.get("/InfoFormateurPhoto?token=" + token)
@@ -82,6 +92,35 @@ const [demandes, setDemandes] = useState([]);
                         />
                       </div>
                     
+
+                    </div>
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                 
+                      </div>
+                      <div className="hidden md:block">
+  <div className="ml-10 flex items-baseline space-x-4 relative">
+    {navigation.map((item) => (
+      <a
+        key={item.name}
+        href={item.href}
+        onClick={item.onClick}
+        className={classNames(
+          location.pathname === item.href
+            ? 'bg-gray-900 text-white'
+            : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+          'rounded-md px-3 py-2 text-sm font-medium relative'
+        )}
+      >
+        {item.name}
+        {item.name === 'Messages' && unreadMessages > 0 && (
+          <span className="absolute top-0 right-0 bg-red-500 rounded-full text-xs font-bold px-2 py-1">{unreadMessages}</span>
+        )}
+      </a>
+    ))}
+  </div>
+</div>
+
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-4 flex items-center md:ml-6">

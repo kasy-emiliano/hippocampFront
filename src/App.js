@@ -127,6 +127,7 @@ import NewFormation from '@/formateurs/pages/NewFormation';
 import FormationList from '@/formateurs/pages/FormationList';
 import MesApprenantFormation from '@/formateurs/pages/MesApprenantFormation';
 import MesApprenantInscit from '@/formateurs/pages/MesApprenantInscit';
+import ListeMessageFormateur from '@/formateurs/pages/ListeMessageFormateur';
 
 import Detailform from '@/formateurs/pages/Detailform';
 
@@ -227,6 +228,7 @@ function App() {
                     <Route path="formationList" element={<FormationList />}/>
                     <Route path="MesApprenantFormation" element={<MesApprenantFormation />}/>
                     <Route path="MesApprenantInscit" element={<MesApprenantInscit />}/>
+                    <Route path="ListeMessageFormateur" element={<ListeMessageFormateur />}/>
                     <Route path="newformation" element={<NewFormation />}/>
                     <Route path="detailform" element={<Detailform/>}/>
                     <Route path="apprenantlist" element={<ApprenantList/>}/>

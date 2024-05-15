@@ -18,6 +18,8 @@ const Examens = () => {
       const props = { openModal, setOpenModal};
     
       const [TitreExamen, setTitreExamen] = useState("");
+      const [DateDebutExamen, setDateDebutExamen] = useState("");
+      const [DateFinExamen, setDateFinExamen] = useState("");
       const [timer, setTimer] = useState("");
       const [examens, setExamens] = useState([]);
 
@@ -30,6 +32,12 @@ const Examens = () => {
       };
       const handleChangeTimer = (event) => {
         setTimer(event.target.value);
+      };
+      const handleChangeDateDebutExamen = (event) => {
+        setDateDebutExamen(event.target.value);
+      };      
+      const handleChangeDateFinExamen = (event) => {
+        setDateFinExamen(event.target.value);
       };
 
 
@@ -54,7 +62,7 @@ useEffect(() => {
         e.preventDefault();
          // Envoyer les données au backend
          try {
-          const response = await axios.post("/AjoutExam?idFormation="+ idFormation+ "&TitreExamen="+ TitreExamen+"&timer="+ timer);
+          const response = await axios.post("/AjoutExam?idFormation="+ idFormation+ "&TitreExamen="+ TitreExamen+"&DateDebutExamen="+ DateDebutExamen+"&DateFinExamen="+DateFinExamen);
         
            if(response.status === 200) {
             Swal.fire({
@@ -136,8 +144,27 @@ useEffect(() => {
 
                 <br></br>
 
-                <Label htmlFor="TitreExamen" value="Temps en seconde" />
-                <TextInput id="timer" placeholder="Veuillez remplir..." onChange={handleChangeTimer} required />
+                <div>
+                           <div className="mb-2 block">
+                               <Label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="DateDebutExamen" 
+                                      value="Date et heur début examen"/>
+                           </div>
+                           <div className="flex space-x-4 items-center">
+                               <TextInput id="DateDebutExamen" type="datetime-local" placeholder="Veuillez remplir..."onChange={handleChangeDateDebutExamen} required />
+                               
+                           </div>
+                         </div>
+<br></br>
+                         <div>
+                           <div className="mb-2 block">
+                               <Label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="DateFinExamen" 
+                                      value="Date et heur fin examen"/>
+                           </div>
+                           <div className="flex space-x-4 items-center">
+                               <TextInput id="DateFinExamen" type="datetime-local" placeholder="Veuillez remplir..."onChange={handleChangeDateFinExamen} required />
+                               
+                           </div>
+                         </div>
               </div>
                       
               <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-300">

@@ -15,107 +15,51 @@ const ExamenComponent = () => {
   const token = Cookies.get('token');
   const [demandes, setDemandes] = useState(null); // Ajout de l'état demandes
   const [idrep, setIdrep] = useState([]);
-
-  //const [timer, setTimer] = useState(10); // Temps en secondes (600 secondes = 10 minutes)
-  const [intervalId, setIntervalId] = useState(null);
-  const [timer, setTimer] = useState(null);
-  const [startTime, setStartTime] = useState(null);
+  const [timer, setTimer] = useState({ minutes: 0, seconds: 0 });
 
 
-  /*useEffect(() => {
-    axios.get("/Timer?idExamen="+idExamen)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          // Mise à jour de l'état avec le premier objet Apprenant de la réponse
-          setTimer(response.data[0].timer);
-  
-          // Enregistrez startTime et duration dans le stockage local ici
-          const startTime = Date.now();
-          localStorage.setItem('startTime', startTime);
-          localStorage.setItem('duration', response.data[0].timer);
-        }
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
-      });
-  }, [idExamen]);*/
+  const [countdownDuration, setCountdownDuration] = useState(null);
 
   useEffect(() => {
-    axios.get("/Timer?idExamen="+idExamen)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          const timerFromDB = response.data[0].timer;
-          setTimer(timerFromDB);
-  
-          const storedStartTime = localStorage.getItem('startTime');
-          if (storedStartTime) {
-            const storedDuration = parseInt(localStorage.getItem('duration'));
-            const elapsedTime = Math.floor((Date.now() - parseInt(storedStartTime)) / 1000);
-            const remainingTime = Math.max(0, storedDuration - elapsedTime);
-            setTimer(remainingTime);
-  
-            const id = setInterval(() => {
-              const elapsedSeconds = Math.floor((Date.now() - parseInt(storedStartTime)) / 1000);
-              const remaining = Math.max(0, storedDuration - elapsedSeconds);
-              setTimer(remaining);
-              if (remaining === 0) {
-                clearInterval(id);
-                Swal.fire({
-                  icon: 'warning',
-                  title: 'Temps écoulé',
-                  text: 'Le temps pour passer cet examen est écoulé.',
-                  allowOutsideClick: false,
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    envoyerReponsesAuBackend();
-                  }
-                });
-              }
-            }, 1000);
-            setIntervalId(id);
-          } else {
-            const newStartTime = Date.now();
-            localStorage.setItem('startTime', newStartTime);
-            localStorage.setItem('duration', timerFromDB);
-            const id = setInterval(() => {
-              const elapsedSeconds = Math.floor((Date.now() - newStartTime) / 1000);
-              const remaining = Math.max(0, timerFromDB - elapsedSeconds);
-              setTimer(remaining);
-              if (remaining === 0) {
-                clearInterval(id);
-                Swal.fire({
-                  icon: 'warning',
-                  title: 'Temps écoulé',
-                  text: 'Le temps pour passer cet examen est écoulé.',
-                  allowOutsideClick: false,
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    envoyerReponsesAuBackend();
-                  }
-                });
-              }
-            }, 1000);
-            setIntervalId(id);
-          }
+    const startCountdown = async () => {
+      try {
+        const response = await axios.post('/demarrerCompteARebours', { idExamen });
+        if (response.status === 200) {
+          setCountdownDuration(response.data);
+          startTimer(response.data); // Démarrer le timer côté client
         }
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la récupération des détails de l\'examen :', error);
-      });
-  
-    return () => {
-      clearInterval(intervalId);
+      } catch (error) {
+        console.error('Erreur lors du démarrage du compte à rebours :', error);
+      }
     };
+
+    startCountdown();
   }, [idExamen]);
+  const startTimer = (duration) => {
+    let timer = duration * 60; // Convertir la durée en secondes
+    let minutes, seconds;
   
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    const intervalId = setInterval(() => {
+      // Calculer les minutes et les secondes restantes
+      minutes = Math.floor(timer / 60);
+      seconds = timer % 60;
+  
+      // Mettre à jour l'état du composant avec les minutes et les secondes restantes
+      setTimer({ minutes, seconds });
+  
+      // Décrémenter le temps restant
+      timer--;
+  
+      // Vérifier si le temps est écoulé
+      if (timer < 0) {
+        // Arrêter le compte à rebours
+        clearInterval(intervalId);
+        // Afficher un message ou déclencher une action lorsque le temps est écoulé
+        console.log("Temps écoulé !");
+      }
+    }, 1000); // Appel toutes les secondes
   };
-
-
-  
+   
 const handleChange = (e, demandeReponse) => {
   const { value, checked } = e.target;
 
@@ -138,7 +82,7 @@ const envoyerReponsesAuBackend = async (e) => {
           Swal.fire({
               icon: 'success',
               title: 'Bravo',
-              text: 'Vous avez terminer le quiz',
+              text: 'Vous avez terminer votre examen',
               footer: '<a href=""></a>'
             });
             window.location.href="/SuivreCours?idFormation="+idFormation+ "&token="+ token;
@@ -160,37 +104,6 @@ const envoyerReponsesAuBackend = async (e) => {
       }
 
   };
-
-
-
-  /*useEffect(() => {
-    // Démarre le compte à rebours lors du montage du composant
-    const id = setInterval(() => {
-      setTimer((prevTimer) => prevTimer - 1);
-    }, 1000); // Appel toutes les secondes
-    setIntervalId(id);
-
-    // Nettoie l'intervalle lors du démontage du composant
-    return () => clearInterval(id);
-  }, []);*/
-
- /* useEffect(() => {
-    // Affiche une alerte lorsque le temps est écoulé
-    if (timer === 0) {
-      clearInterval(intervalId); // Arrête le compte à rebours
-      Swal.fire({
-        icon: 'warning',
-        title: 'Temps écoulé',
-        text: 'Le temps pour passer cet examen est écoulé.',
-        allowOutsideClick: false,
-        
-      }).then((result) => {
-        if (result.isConfirmed) {
-          envoyerReponsesAuBackend(); // Appel de la fonction pour envoyer les réponses au backend
-        }
-      });
-    }
-  }, [timer, intervalId]);*/
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -227,8 +140,14 @@ const envoyerReponsesAuBackend = async (e) => {
 
   <div>
 <section className="bg-white dark:bg-gray-900">
+<h2>Compte à rebours</h2>
+      {countdownDuration !== null ? (
+        <p>Temps restant : {countdownDuration} minutes</p>
+      ) : (
+        <p>Démarrage du compte à rebours en cours...</p>
+      )}
+      {/* Afficher les questions et les réponses ici */}
 <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-6">
-<div>Temps restant : {formatTime(timer)}</div>
 
     {demandes && (
         <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">

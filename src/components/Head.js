@@ -148,22 +148,24 @@ const Head = () => {
     setSelectedAccesId(selectedAccesId);
   };
 
-  const generateRandomIndexes = (maxRange,count) => {
+  const generateRandomIndexes = (maxRange, count) => {
     const indexes = new Set();
-    while (indexes.size < count) {
-      const randomIndex = Math.floor(Math.random()* maxRange);
+    while (indexes.size < Math.min(count, maxRange)) {
+      const randomIndex = Math.floor(Math.random() * maxRange);
       indexes.add(randomIndex);
     }
     return Array.from(indexes);
   };
+  
   useEffect(() => {
     if (demandes.length > 0) {
-      const randomIndexes = generateRandomIndexes(demandes.length, 3);
+      const randomCount = Math.min(3, demandes.length); // Nombre maximum de formations aléatoires à sélectionner
+      const randomIndexes = generateRandomIndexes(demandes.length, randomCount);
       const selectedFormations = randomIndexes.map(index => demandes[index]);
       setRandomFormations(selectedFormations);
     }
   }, [demandes]);
-
+  
   
 
   // Calculate the indexes of the cards to display for the current page
