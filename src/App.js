@@ -126,7 +126,10 @@ import NewFormation from '@/formateurs/pages/NewFormation';
 
 import FormationList from '@/formateurs/pages/FormationList';
 import MesApprenantFormation from '@/formateurs/pages/MesApprenantFormation';
+import ResultatExamFormation from '@/formateurs/pages/ResultatExamFormation';
 import MesApprenantInscit from '@/formateurs/pages/MesApprenantInscit';
+import ResultatExamen from '@/formateurs/pages/ResultatExamen';
+import Resultat from '@/formateurs/pages/Resultat';
 import ListeMessageFormateur from '@/formateurs/pages/ListeMessageFormateur';
 
 import Detailform from '@/formateurs/pages/Detailform';
@@ -227,7 +230,10 @@ function App() {
                     <Route path="dashboardformateur" element={<DashboardFormateur/>}/>
                     <Route path="formationList" element={<FormationList />}/>
                     <Route path="MesApprenantFormation" element={<MesApprenantFormation />}/>
+                    <Route path="ResultatExamFormation" element={<ResultatExamFormation />}/>
                     <Route path="MesApprenantInscit" element={<MesApprenantInscit />}/>
+                    <Route path="ResultatExamen" element={<ResultatExamen />}/>
+                    <Route path="Resultat" element={<Resultat />}/>
                     <Route path="ListeMessageFormateur" element={<ListeMessageFormateur />}/>
                     <Route path="newformation" element={<NewFormation />}/>
                     <Route path="detailform" element={<Detailform/>}/>
