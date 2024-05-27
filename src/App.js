@@ -130,6 +130,8 @@ import ResultatExamFormation from '@/formateurs/pages/ResultatExamFormation';
 import MesApprenantInscit from '@/formateurs/pages/MesApprenantInscit';
 import ResultatExamen from '@/formateurs/pages/ResultatExamen';
 import Resultat from '@/formateurs/pages/Resultat';
+import GrapheTauxReussite from '@/formateurs/pages/GrapheTauxReussite';
+import ClassementFormation from '@/formateurs/pages/ClassementFormation';
 import ListeMessageFormateur from '@/formateurs/pages/ListeMessageFormateur';
 
 import Detailform from '@/formateurs/pages/Detailform';
@@ -234,6 +236,8 @@ function App() {
                     <Route path="MesApprenantInscit" element={<MesApprenantInscit />}/>
                     <Route path="ResultatExamen" element={<ResultatExamen />}/>
                     <Route path="Resultat" element={<Resultat />}/>
+                    <Route path="GrapheTauxReussite" element={<GrapheTauxReussite />}/>
+                    <Route path="ClassementFormation" element={<ClassementFormation />}/>
                     <Route path="ListeMessageFormateur" element={<ListeMessageFormateur />}/>
                     <Route path="newformation" element={<NewFormation />}/>
                     <Route path="detailform" element={<Detailform/>}/>
